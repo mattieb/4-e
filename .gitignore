@@ -1,0 +1,13 @@
+.DS_Store
+
+# testing files
+/*.bin
+/*.gba
+/*.gbfs
+/*.raw
+/*.sav
+/*.sa2
+
+# build output
+/build
+
