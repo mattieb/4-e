@@ -1,3 +1,8 @@
+#ifndef INCLUDE_LINK_H
+#define INCLUDE_LINK_H
+
+#include <tonc.h>
+
 #define HANDSHAKE_1             0xfbfb
 #define HANDSHAKE_2             0x5841
 #define HANDSHAKE_3             0x4534
@@ -27,3 +32,11 @@
 
 #define EREADER_SIO_END         0xf3f3
 #define GAME_SIO_END            0xf1f1
+
+void activateLink();
+void waitForPlayerAssignment();
+void send(u16 data);
+void sendAndExpect(u16 data, u16 expect);
+u16 sendAndReceiveExcept(u16 data, u16 except);
+
+#endif /* INCLUDE_LINK_H */

@@ -41,8 +41,7 @@ AUDIO_FILES	:=
 GRAPHICS	:=
 
 # Source files to compile
-SOURCES		:=	src/main.c \
-				vendor/gbfs/libgbfs.c
+SOURCES		:=	src/link.c src/main.c src/pick.c src/ui.c vendor/gbfs/libgbfs.c
 
 # Include directories
 INCLUDES	:=	vendor/gbfs 
