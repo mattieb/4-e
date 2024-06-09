@@ -7,10 +7,12 @@ Boy Advance running 4-e to another running the game, using homebrew
 and decoded .bin versions of those cards instead of printed cards
 an an actual e-Reader.
 
-It can currently send level cards between two mGBA instances or
-between two Analogue Pockets.
+It has been tested to successfully and reliably send demo, power-up,
+and level cards between mGBA multiplayer windows as well as real
+Game Boys Advance and [Analogue Pockets](https://www.analogue.co/pocket).
 
-I've written more about 4-e [on my blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-without-an-e-reader).
+I've written more about 4-e [on my
+blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-without-an-e-reader).
 
 ## Usage
 
@@ -35,7 +37,8 @@ I've written more about 4-e [on my blog](https://mattiebee.io/52283/introducing-
     copy /b 4-e.gba+card.gbfs 4-e.card.gba
     ```
 
-4.  Link two Game Boy Advance systems with a link cable.
+4.  Link two Game Boy Advance systems with a link cable.  The game
+    must be player 1, and 4-e must be player 2.
 
 5.  On the first system, run Super Mario Advance 4.
 
