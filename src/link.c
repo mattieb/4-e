@@ -1,10 +1,13 @@
 #include <tonc.h>
 
 #include "link.h"
+#include "ui.h"
 
 void activateLink()
 {
     irq_enable(II_SERIAL);
+    irq_enable(II_KEYPAD);
+    REG_KEYCNT = KEY_B | KCNT_IRQ;
 
     REG_RCNT = REG_RCNT & ~R_MODE_GPIO;
     REG_SIOCNT = SIO_MODE_MULTI;
@@ -14,13 +17,18 @@ void activateLink()
 void waitForPlayerAssignment()
 {
     do
-        IntrWait(1, IRQ_SERIAL);
-    while ((REG_SIOCNT & SIOM_ID_MASK) == 0);
+    {
+        IntrWait(1, IRQ_SERIAL | IRQ_KEYPAD);
+        if (~REG_KEYINPUT & KEY_B)
+            done("Cancelled.", NULL);
+    } while ((REG_SIOCNT & SIOM_ID_MASK) == 0);
 }
 
 void send(u16 data)
 {
-    IntrWait(1, IRQ_SERIAL);
+    IntrWait(1, IRQ_SERIAL | IRQ_KEYPAD);
+    if (~REG_KEYINPUT & KEY_B)
+        done("Cancelled.", NULL);
     REG_SIOMLT_SEND = data;
 }
 

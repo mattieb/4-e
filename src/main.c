@@ -75,17 +75,17 @@ int main(void)
     u32 len;
     const void *file = gbfs_get_nth_obj(gbfs, n, name, &len);
 
-    status("Waiting...", name);
+    status("Waiting... (B=cancel)", name);
     activateLink();
     waitForPlayerAssignment();
 
-    status("Connecting...", name);
+    status("Connecting... (B=cancel)", name);
     if (connect())
     {
         done("Connection failed.", name);
     }
 
-    status("Sending...", name);
+    status("Sending... (B=cancel)", name);
     sendBin(file, len);
 
     done("Card data sent!", name);

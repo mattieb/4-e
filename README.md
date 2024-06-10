@@ -46,6 +46,7 @@ blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-w
 
 7.  Pick the e-Card you wish you send from the list. If your GBFS
     file only had one e-Card in it, it will be selected automatically.
+    From this point on, you can cancel and reset by pressing B.
 
 8.  On the first system, start the e-Reader communication process.
     4-e will connect to the game automatically and try to send your
