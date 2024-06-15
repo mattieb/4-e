@@ -16,43 +16,34 @@ blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-w
 
 ## Usage
 
-1.  Build the .gba ROM or download it from
+1.  Build the 4-e.gba ROM or download it from
     [releases](https://github.com/mattieb/4-e/releases).
 
-2.  [Create a GBFS file](./vendor/gbfs/readme.txt) from the e-Card
-    .bin files you wish to send.  The required tools are [in this
-    repository](./vendor/gbfs/tools/), and also ship with gba-tools
-    in devkitPro, if you have a GBA toolchain installed.
+2.  Using [gbfs-web](https://mattiebee.app/gbfs-web), attach the
+    e-Card .bin files you wish to use to 4-e.gba, and save a new
+    ROM.
 
-3.  Concatenate the ROM and the GBFS file into the new ROM you will
-    use. On Unix-like systems, you can do something like this:
+    -   You can also use the standard tools from
+        [GBFS](https://pineight.com/gba/#gbfs) to create a GBFS
+        file, then concatenate it to 4-e.gba.  (These tools are
+        also included in the "gba-tools" package in devkitARM.)
 
-    ```
-    cat 4-e.gba card.gbfs >4-e.card.gba
-    ```
-
-    On Windows systems, you can do something like this:
-
-    ```
-    copy /b 4-e.gba+card.gbfs 4-e.card.gba
-    ```
-
-4.  Link two Game Boy Advance systems with a link cable.  The game
+3.  Link two Game Boy Advance systems with a link cable.  The game
     must be player 1, and 4-e must be player 2.
 
-5.  On the first system, run Super Mario Advance 4.
+4.  On the first system, run Super Mario Advance 4.
 
-6.  On the second system, run your custom 4-e ROM.
+5.  On the second system, run your custom 4-e ROM.
 
-7.  Pick the e-Card you wish you send from the list. If your GBFS
+6.  Pick the e-Card you wish you send from the list. If your GBFS
     file only had one e-Card in it, it will be selected automatically.
     From this point on, you can cancel and reset by pressing B.
 
-8.  On the first system, start the e-Reader communication process.
+7.  On the first system, start the e-Reader communication process.
     4-e will connect to the game automatically and try to send your
     card.
 
-9.  When the game has finished, press any button on 4-e to reset
+8.  When the game has finished, press any button on 4-e to reset
     so you can send another card if you wish.
 
 ## Troubleshooting
@@ -72,7 +63,7 @@ Check that your link cable is connected firmly and correctly.
 
 4-e wouldn't exist without:
 
-- [devkitPro](https://devkitpro.org)
+- [devkitARM](https://devkitpro.org/wiki/devkitARM)
 
 - [gba-makefile-template](https://github.com/gbadev-org/gba-makefile-template)
 
