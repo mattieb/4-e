@@ -1,0 +1,3 @@
+[submodule "vendor/libgbfs"]
+	path = vendor/libgbfs
+	url = https://github.com/dmdemoura/libgbfs
