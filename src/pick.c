@@ -74,7 +74,7 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
                 char contentType[MAX_CONTENT_TYPE_LENGTH];
                 char shortType[6];
 
-                getCardContentType(object, contentType);
+                get_card_content_type(object, contentType);
                 snprintf(shortType, 6, "%.5s", contentType);
                 tte_printf("%5s ", shortType);
                

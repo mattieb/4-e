@@ -39,8 +39,8 @@
 #define SET_TYPE_D 0x06
 #define SET_TYPE_E 0x08
 
-int getCardContentType(const void *card, char *contentType);
-char getSetType(const void *card);
-u8 getSetNumber(const void *card);
+int get_card_content_type(const void *card, char *content_type);
+char get_set_type(const void *card);
+u8 get_set_number(const void *card);
 
 #endif /* INCLUDE_CARD_H */

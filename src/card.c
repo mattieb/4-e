@@ -28,34 +28,34 @@
 
 #include "card.h"
 
-u8 getSetTypeByte(const void *card)
+u8 get_set_type_byte(const void *card)
 {
     return *(u8 *)(card + SET_TYPE_BYTE_OFFSET);
 }
 
-int getCardContentType(const void *card, char *contentType)
+int get_card_content_type(const void *card, char *content_type)
 {
-    switch (getSetTypeByte(card))
+    switch (get_set_type_byte(card))
     {
     case SET_TYPE_A:
-        strncpy(contentType, "Level", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Level", MAX_CONTENT_TYPE_LENGTH);
         return 0;
     case SET_TYPE_C:
     case SET_TYPE_D:
-        strncpy(contentType, "Power-Up", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Power-Up", MAX_CONTENT_TYPE_LENGTH);
         return 0;
     case SET_TYPE_E:
-        strncpy(contentType, "Demo", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Demo", MAX_CONTENT_TYPE_LENGTH);
         return 0;
     default:
-        strncpy(contentType, "???", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "???", MAX_CONTENT_TYPE_LENGTH);
         return 1;
     }
 }
 
-char getSetType(const void *card)
+char get_set_type(const void *card)
 {
-    switch (getSetTypeByte(card))
+    switch (get_set_type_byte(card))
     {
     case SET_TYPE_A:
         return 'A';
@@ -70,7 +70,7 @@ char getSetType(const void *card)
     }
 }
 
-u8 getSetNumber(const void *card)
+u8 get_set_number(const void *card)
 {
     return *(u8 *)(card + SET_NUMBER_BYTE_OFFSET);
 }

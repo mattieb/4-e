@@ -33,11 +33,6 @@
 #include "ui.h"
 #include "volumes.h"
 
-
-
-
-
-
 int main(void)
 {
     const GBFS_FILE *initialVolume;
@@ -72,9 +67,9 @@ int main(void)
     char setType;
     u8 setNumber;
 
-    getCardContentType(object, contentType);
-    setType = getSetType(object);
-    setNumber = getSetNumber(object);
+    get_card_content_type(object, contentType);
+    setType = get_set_type(object);
+    setNumber = get_set_number(object);
 
     snprintf(meta, 31, "07-%c%03u %s Card", setType, setNumber, contentType);
 
