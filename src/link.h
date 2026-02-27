@@ -1,7 +1,7 @@
 /*
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
- * Copyright 2024 Mattie Behrens.
+ * Copyright 2024-2026 Mattie Behrens.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
