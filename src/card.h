@@ -23,18 +23,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_UI_H
-#define INCLUDE_UI_H
+#ifndef INCLUDE_CARD_H
+#define INCLUDE_CARD_H
 
-#define CX_BLUE 0x1000
-#define CX_SKYBLUE 0x2000
-#define CX_YELLOW 0x3000
-#define CX_BROWN 0x4000
-#define CX_RED 0x5000
+#define MAX_CONTENT_TYPE_LENGTH 9
 
-void initScreen();
-void clearScreen();
-void status(const char *message, const char *name, const char *meta);
-void done(const char *message, const char *name);
+#define SET_NUMBER_BYTE_OFFSET 0x72
+#define SET_TYPE_BYTE_OFFSET 0x73
 
-#endif /* INCLUDE_UI_H */
+#define SET_TYPE_A 0x00
+#define SET_TYPE_C 0x04
+#define SET_TYPE_D 0x06
+#define SET_TYPE_E 0x08
+
+int getCardContentType(const void *card, char *contentType);
+char getSetType(const void *card);
+u8 getSetNumber(const void *card);
+
+#endif /* INCLUDE_CARD_H */

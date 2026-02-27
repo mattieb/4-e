@@ -32,6 +32,6 @@
 
 #define PICKER_PAGE_SIZE 16
 
-size_t pickBin(const GBFS_FILE *gbfs);
+const void *pick(const GBFS_FILE *initialVolume, char *name);
 
 #endif /* INCLUDE_PICK_H */

@@ -28,6 +28,8 @@ blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-w
         file, then concatenate it to 4-e.gba.  (These tools are
         also included in the "gba-tools" package in devkitARM.)
 
+    -   *New in v3.0!* If you're using the command-like GBFS tool, you can attach multiple GBFS files and page through them to organize your cards. For this to work, you will need to use the "padbin" tool to pad each GBFS file to 256 bytes.
+
 3.  Link two Game Boy Advance systems with a link cable.  The game
     must be player 1, and 4-e must be player 2.
 

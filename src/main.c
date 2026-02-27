@@ -2,7 +2,7 @@
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
  * Copyright 2024 Mattie Behrens.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * “Software”), to deal in the Software without restriction, including
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -23,13 +23,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stddef.h>
+#include <stdio.h>
 #include <tonc.h>
 
 #include "gbfs.h"
+#include "card.h"
 #include "link.h"
 #include "pick.h"
 #include "ui.h"
+#include "volumes.h"
 
 #define CARD_HEADER_OFFSET 0x72
 
@@ -66,11 +68,11 @@ bool connect()
     return false;
 }
 
-void sendBin(const void *file, u32 len)
+void sendBin(const void *file)
 {
     send(EREADER_SEND_START);
     u32 checksum = 0;
-    for (off_t o = CARD_HEADER_OFFSET; o < len; o += 2)
+    for (off_t o = CARD_HEADER_OFFSET; o < 0x840; o += 2)
     {
         u16 block = *(u16 *)(file + o);
         send(block);
@@ -83,35 +85,56 @@ void sendBin(const void *file, u32 len)
 
 int main(void)
 {
-    irq_init(NULL);
-    irq_enable(II_VBLANK);
+    const GBFS_FILE *initialVolume;
+    char name[MAX_OBJECT_NAME_LENGTH];
+    const void *object;
 
     initScreen();
 
-    const GBFS_FILE *gbfs = find_first_gbfs_file((void *)find_first_gbfs_file);
-    if (!gbfs)
+    initialVolume = findVolume(0);
+    if (!initialVolume)
     {
-        done("No attached GBFS file found.", NULL);
+        done("Please attach a GBFS volume.", NULL);
     }
 
-    size_t n = gbfs->dir_nmemb == 1 ? 0 : pickBin(gbfs);
+    if (!moreVolumes(initialVolume) && objectCount(initialVolume) == 1)
+    {
+        // object should not be NULL, but we will end if it is
+        object = getObject(initialVolume, 1, name);
+    }
+    else
+    {
+        object = pick(initialVolume, name);
+    }
 
-    char name[25];
-    u32 len;
-    const void *file = gbfs_get_nth_obj(gbfs, n, name, &len);
+    if (object == NULL)
+    {
+        done("Thank you for playing!", NULL);
+    }
 
-    status("Waiting... (B=cancel)", name);
+    char meta[31];
+    char contentType[MAX_CONTENT_TYPE_LENGTH];
+    char setType;
+    u8 setNumber;
+
+    getCardContentType(object, contentType);
+    setType = getSetType(object);
+    setNumber = getSetNumber(object);
+
+    snprintf(meta, 31, "07-%c%03u %s Card", setType, setNumber, contentType);
+
+    status("Waiting... (B=cancel)", name, meta);
     activateLink();
     waitForPlayerAssignment();
 
-    status("Connecting... (B=cancel)", name);
+    status("Connecting... (B=cancel)", name, meta);
     if (connect())
     {
         done("Connection failed.", name);
     }
 
-    status("Sending... (B=cancel)", name);
-    sendBin(file, len);
+    status("Sending... (B=cancel)", name, meta);
+    sendBin(object);
 
     done("Card data sent!", name);
 }

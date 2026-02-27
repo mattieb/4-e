@@ -2,7 +2,7 @@
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
  * Copyright 2024 Mattie Behrens.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * “Software”), to deal in the Software without restriction, including
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -24,11 +24,14 @@
  */
 
 #include <stddef.h>
+#include <string.h>
 #include <tonc.h>
 
 #include "gbfs.h"
+#include "card.h"
 #include "pick.h"
 #include "ui.h"
+#include "volumes.h"
 
 void waitUp(u16 key)
 {
@@ -36,80 +39,151 @@ void waitUp(u16 key)
         VBlankIntrWait();
 }
 
-size_t pickBin(const GBFS_FILE *gbfs)
+const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
 {
-    u16 count = gbfs->dir_nmemb;
-    u16 page = 0;
-    u16 selection = 0;
+    const GBFS_FILE *currentVolume = initialVolume;
 
-    while (true)
+    while (1)
     {
-        clearScreen();
-        
-        tte_printf("+=move, A=pick     %5d/%5d\n\n", selection + 1, count);
-
-        for (int n = page; n < count && n < page + PICKER_PAGE_SIZE; n++)
-        {
-            char name[25] = {0};
-            gbfs_get_nth_obj(gbfs, n, name, NULL);
-            if (n == selection)
-            {
-                tte_write("  > ");
-            }
-            else
-            {
-                tte_write("    ");
-            }
-            tte_write(name);
-            tte_write("\n");
-        }
+        u16 count = objectCount(currentVolume);
+        u16 page = 0;
+        u16 selection = 0;
+        const void *selectedObject;
 
         while (true)
         {
-            VBlankIntrWait();
+            clearScreen();
 
-            if (~REG_KEYINPUT & KEY_DOWN)
+            tte_set_special(CX_SKYBLUE);
+            tte_printf("+/L/R=move, A=pick %5d/%5d\n\n", selection + 1, count);
+
+            for (int index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
             {
-                if (selection < (count - 1)) selection++;
-                waitUp(KEY_DOWN);
-                break;
+                char name[MAX_OBJECT_NAME_LENGTH];
+                const void *object = getObject(currentVolume, index, name);
+
+                if (index == selection)
+                {
+                    tte_set_special(CX_SKYBLUE);
+                    selectedObject = object;
+                    strncpy(selectedName, name, MAX_OBJECT_NAME_LENGTH);
+                }
+                else
+                    tte_set_special(CX_BLUE);
+
+                char contentType[MAX_CONTENT_TYPE_LENGTH];
+                char shortType[6];
+
+                getCardContentType(object, contentType);
+                snprintf(shortType, 6, "%.5s", contentType);
+                tte_printf("%5s ", shortType);
+               
+                if (index == selection)
+                    tte_set_special(CX_YELLOW);
+                else
+                    tte_set_special(CX_BROWN);
+
+                tte_write(name);
+                tte_write("\n");
             }
 
-            if (~REG_KEYINPUT & KEY_UP)
+            while (true)
             {
-                if (!selection == 0) selection--;
-                waitUp(KEY_UP);
-                break;
-            }
+                VBlankIntrWait();
 
-            if (~REG_KEYINPUT & KEY_RIGHT)
-            {
-                if (selection <= (count - 1 - PICKER_PAGE_SIZE))
+                if (~REG_KEYINPUT & KEY_DOWN)
+                {
+                    if (selection < (count - 1))
+                        selection++;
+                    else
+                    {
+                        currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
+                        count = objectCount(currentVolume);
+                        selection = 0;
+                    }
+
+                    waitUp(KEY_DOWN);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_UP)
+                {
+                    if (selection != 0)
+                        selection--;
+                    else
+                    {
+                        currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
+                        count = objectCount(currentVolume);
+                        selection = count - 1;
+                    }
+
+                    waitUp(KEY_UP);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_RIGHT)
+                {
                     selection += PICKER_PAGE_SIZE;
-                else
-                    selection = (count - 1);
-                waitUp(KEY_RIGHT);
-                break;
+
+                    // would we move off the last page?
+                    if (selection / PICKER_PAGE_SIZE > (count - 1) / PICKER_PAGE_SIZE)
+                    {
+                        currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
+                        count = objectCount(currentVolume);
+                        selection = selection % PICKER_PAGE_SIZE;
+                    }
+
+                    waitUp(KEY_RIGHT);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_LEFT)
+                {
+                    if (selection >= PICKER_PAGE_SIZE)
+                        selection -= PICKER_PAGE_SIZE;
+                    else
+                    {
+                        currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
+                        count = objectCount(currentVolume);
+                        selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
+                    }
+
+                    waitUp(KEY_LEFT);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_L)
+                {
+                    currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
+                    count = objectCount(currentVolume);
+                    selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
+
+                    waitUp(KEY_L);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_R)
+                {
+                    currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
+                    count = objectCount(currentVolume);
+                    selection = selection % PICKER_PAGE_SIZE;
+
+                    waitUp(KEY_R);
+                    break;
+                }
+
+                if (~REG_KEYINPUT & KEY_A)
+                {
+                    return selectedObject;
+                }
             }
 
-            if (~REG_KEYINPUT & KEY_LEFT)
-            {
-                if (selection >= PICKER_PAGE_SIZE)
-                    selection -= PICKER_PAGE_SIZE;
-                else
-                    selection = 0;
-                waitUp(KEY_LEFT);
-                break;
-            }
+            if (selection >= count)
+                selection = count - 1;
 
-            if (~REG_KEYINPUT & KEY_A)
-            {
-                return selection;
-            }
+            page = (selection / PICKER_PAGE_SIZE) * PICKER_PAGE_SIZE;
         }
 
-        page = (selection / PICKER_PAGE_SIZE) * PICKER_PAGE_SIZE;
+        return 0;
     }
-
-    return 0;
 }

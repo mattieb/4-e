@@ -23,18 +23,54 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_UI_H
-#define INCLUDE_UI_H
+#include <string.h>
+#include <tonc.h>
 
-#define CX_BLUE 0x1000
-#define CX_SKYBLUE 0x2000
-#define CX_YELLOW 0x3000
-#define CX_BROWN 0x4000
-#define CX_RED 0x5000
+#include "card.h"
 
-void initScreen();
-void clearScreen();
-void status(const char *message, const char *name, const char *meta);
-void done(const char *message, const char *name);
+u8 getSetTypeByte(const void *card)
+{
+    return *(u8 *)(card + SET_TYPE_BYTE_OFFSET);
+}
 
-#endif /* INCLUDE_UI_H */
+int getCardContentType(const void *card, char *contentType)
+{
+    switch (getSetTypeByte(card))
+    {
+    case SET_TYPE_A:
+        strncpy(contentType, "Level", MAX_CONTENT_TYPE_LENGTH);
+        return 0;
+    case SET_TYPE_C:
+    case SET_TYPE_D:
+        strncpy(contentType, "Power-Up", MAX_CONTENT_TYPE_LENGTH);
+        return 0;
+    case SET_TYPE_E:
+        strncpy(contentType, "Demo", MAX_CONTENT_TYPE_LENGTH);
+        return 0;
+    default:
+        strncpy(contentType, "???", MAX_CONTENT_TYPE_LENGTH);
+        return 1;
+    }
+}
+
+char getSetType(const void *card)
+{
+    switch (getSetTypeByte(card))
+    {
+    case SET_TYPE_A:
+        return 'A';
+    case SET_TYPE_C:
+        return 'C';
+    case SET_TYPE_D:
+        return 'D';
+    case SET_TYPE_E:
+        return 'E';
+    default:
+        return '?';
+    }
+}
+
+u8 getSetNumber(const void *card)
+{
+    return *(u8 *)(card + SET_NUMBER_BYTE_OFFSET);
+}

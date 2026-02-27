@@ -1,7 +1,7 @@
 /*
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
- * Copyright 2024 Mattie Behrens.
+ * Copyright 2024, 2026 Mattie Behrens.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,18 +23,19 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_UI_H
-#define INCLUDE_UI_H
+#ifndef INCLUDE_VOLUMES_H
+#define INCLUDE_VOLUMES_H
 
-#define CX_BLUE 0x1000
-#define CX_SKYBLUE 0x2000
-#define CX_YELLOW 0x3000
-#define CX_BROWN 0x4000
-#define CX_RED 0x5000
+#include "gbfs.h"
 
-void initScreen();
-void clearScreen();
-void status(const char *message, const char *name, const char *meta);
-void done(const char *message, const char *name);
+#define MAX_OBJECT_NAME_LENGTH 25
 
-#endif /* INCLUDE_UI_H */
+const GBFS_FILE *findVolume(const void *start);
+const GBFS_FILE *nextVolume(const GBFS_FILE *currentVolume);
+const GBFS_FILE *nextVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume);
+const GBFS_FILE *previousVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume);
+int moreVolumes(const GBFS_FILE *currentVolume);
+size_t objectCount(const GBFS_FILE *volume);
+const void *getObject(const GBFS_FILE *volume, size_t index, char *name);
+
+#endif /* INCLUDE_VOLUMES_H */
