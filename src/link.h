@@ -55,13 +55,9 @@
 #define GAME_RECEIVE_OK         0xf5f5
 #define GAME_RECEIVE_ERROR      0xf4f4
 
-#define EREADER_SIO_END         0xf3f3
-#define GAME_SIO_END            0xf1f1
-
-void activateLink();
-void waitForPlayerAssignment();
-void send(u16 data);
-void sendAndExpect(u16 data, u16 expect);
-u16 sendAndReceiveExcept(u16 data, u16 except);
+void setup_link();
+int wait_for_player_assignment();
+bool connect();
+void send_card(const void *card);
 
 #endif /* INCLUDE_LINK_H */

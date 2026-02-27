@@ -2,7 +2,7 @@
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
  * Copyright 2024 Mattie Behrens.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * “Software”), to deal in the Software without restriction, including
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -25,10 +25,11 @@
 
 #include <tonc.h>
 
+#include "card.h"
 #include "link.h"
 #include "ui.h"
 
-void activateLink()
+void setup_link()
 {
     irq_enable(II_SERIAL);
     irq_enable(II_KEYPAD);
@@ -39,25 +40,27 @@ void activateLink()
     REG_SIOCNT = REG_SIOCNT | SIO_IRQ | SIOM_CONNECTED | SIOM_SLAVE | SIOM_115200;
 }
 
-void waitForPlayerAssignment()
+int wait_for_player_assignment()
 {
     do
     {
         IntrWait(1, IRQ_SERIAL | IRQ_KEYPAD);
         if (~REG_KEYINPUT & KEY_B)
-            done("Cancelled.", NULL);
+            return 1;
     } while ((REG_SIOCNT & SIOM_ID_MASK) == 0);
+    return 0;
 }
 
-void send(u16 data)
+int send(u16 data)
 {
     IntrWait(1, IRQ_SERIAL | IRQ_KEYPAD);
     if (~REG_KEYINPUT & KEY_B)
-        done("Cancelled.", NULL);
+        return 1;
     REG_SIOMLT_SEND = data;
+    return 0;
 }
 
-void sendAndExpect(u16 data, u16 expect)
+void send_until_receive(u16 data, u16 expect)
 {
     u16 received;
     do
@@ -67,7 +70,7 @@ void sendAndExpect(u16 data, u16 expect)
     } while (received != expect);
 }
 
-u16 sendAndReceiveExcept(u16 data, u16 except)
+u16 send_until_receive_not(u16 data, u16 except)
 {
     u16 received;
     do
@@ -76,4 +79,52 @@ u16 sendAndReceiveExcept(u16 data, u16 except)
         received = REG_SIOMULTI0;
     } while (received == except);
     return received;
+}
+
+bool connect()
+{
+    send_until_receive(HANDSHAKE_1, HANDSHAKE_1);
+    send_until_receive(HANDSHAKE_2, HANDSHAKE_2);
+    send_until_receive(HANDSHAKE_3, HANDSHAKE_3);
+
+    u16 cardRequest = send_until_receive_not(HANDSHAKE_3, HANDSHAKE_3);
+
+    send_until_receive(GAME_ANIMATING, EREADER_ANIMATING);
+    send(EREADER_ANIMATING);
+
+    switch (cardRequest)
+    {
+    case GAME_REQUEST_DEMO:
+        send_until_receive(EREADER_READY, GAME_READY_DEMO);
+        break;
+
+    case GAME_REQUEST_POWERUP:
+        send_until_receive(EREADER_READY, GAME_READY_POWERUP);
+        break;
+
+    case GAME_REQUEST_LEVEL:
+        send_until_receive(EREADER_READY, GAME_READY_LEVEL);
+        break;
+
+    default:
+        return true;
+    }
+
+    send_until_receive(EREADER_SEND_READY, GAME_RECEIVE_READY);
+    return false;
+}
+
+void send_card(const void *card)
+{
+    send(EREADER_SEND_START);
+    u32 checksum = 0;
+    for (off_t o = CARD_HEADER_OFFSET; o < CARD_DATA_LENGTH; o += 2)
+    {
+        u16 block = *(u16 *)(card + o);
+        send(block);
+        checksum += block;
+    }
+    send(checksum & 0xffff);
+    send(checksum >> 16);
+    send(EREADER_SEND_END);
 }

@@ -33,55 +33,10 @@
 #include "ui.h"
 #include "volumes.h"
 
-#define CARD_HEADER_OFFSET 0x72
 
-bool connect()
-{
-    sendAndExpect(HANDSHAKE_1, HANDSHAKE_1);
-    sendAndExpect(HANDSHAKE_2, HANDSHAKE_2);
-    sendAndExpect(HANDSHAKE_3, HANDSHAKE_3);
 
-    u16 cardRequest = sendAndReceiveExcept(HANDSHAKE_3, HANDSHAKE_3);
 
-    sendAndExpect(GAME_ANIMATING, EREADER_ANIMATING);
-    send(EREADER_ANIMATING);
 
-    switch (cardRequest)
-    {
-    case GAME_REQUEST_DEMO:
-        sendAndExpect(EREADER_READY, GAME_READY_DEMO);
-        break;
-
-    case GAME_REQUEST_POWERUP:
-        sendAndExpect(EREADER_READY, GAME_READY_POWERUP);
-        break;
-
-    case GAME_REQUEST_LEVEL:
-        sendAndExpect(EREADER_READY, GAME_READY_LEVEL);
-        break;
-
-    default:
-        return true;
-    }
-
-    sendAndExpect(EREADER_SEND_READY, GAME_RECEIVE_READY);
-    return false;
-}
-
-void sendBin(const void *file)
-{
-    send(EREADER_SEND_START);
-    u32 checksum = 0;
-    for (off_t o = CARD_HEADER_OFFSET; o < 0x840; o += 2)
-    {
-        u16 block = *(u16 *)(file + o);
-        send(block);
-        checksum += block;
-    }
-    send(checksum & 0xffff);
-    send(checksum >> 16);
-    send(EREADER_SEND_END);
-}
 
 int main(void)
 {
@@ -124,8 +79,8 @@ int main(void)
     snprintf(meta, 31, "07-%c%03u %s Card", setType, setNumber, contentType);
 
     status("Waiting... (B=cancel)", name, meta);
-    activateLink();
-    waitForPlayerAssignment();
+    setup_link();
+    wait_for_player_assignment();
 
     status("Connecting... (B=cancel)", name, meta);
     if (connect())
@@ -134,7 +89,7 @@ int main(void)
     }
 
     status("Sending... (B=cancel)", name, meta);
-    sendBin(object);
+    send_card(object);
 
     done("Card data sent!", name);
 }
