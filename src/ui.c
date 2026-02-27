@@ -29,7 +29,7 @@
 #include "link.h"
 #include "ui.h"
 
-void initScreen()
+void setup_screen()
 {
     irq_init(NULL);
     irq_enable(II_VBLANK);
@@ -45,7 +45,7 @@ void initScreen()
     pal_bg_bank[5][15] = 0x0cbb;
 }
 
-void clearScreen()
+void clear_screen()
 {
     tte_erase_screen();
     tte_set_pos(0, 152);
@@ -57,7 +57,7 @@ void clearScreen()
 
 void status(const char *message, const char *name, const char *meta)
 {
-    clearScreen();
+    clear_screen();
 
     if (name != NULL)
     {
@@ -83,7 +83,7 @@ void status(const char *message, const char *name, const char *meta)
 
 void done(const char *message, const char *name)
 {
-    clearScreen();
+    clear_screen();
 
     if (name != NULL)
     {

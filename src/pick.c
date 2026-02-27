@@ -52,7 +52,7 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
 
         while (true)
         {
-            clearScreen();
+            clear_screen();
 
             tte_set_special(CX_SKYBLUE);
             tte_printf("+/L/R=move, A=pick %5d/%5d\n\n", selection + 1, count);

@@ -39,7 +39,7 @@ int main(void)
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
 
-    initScreen();
+    setup_screen();
 
     initialVolume = findVolume(0);
     if (!initialVolume)

@@ -32,8 +32,8 @@
 #define CX_BROWN 0x4000
 #define CX_RED 0x5000
 
-void initScreen();
-void clearScreen();
+void setup_screen();
+void clear_screen();
 void status(const char *message, const char *name, const char *meta);
 void done(const char *message, const char *name);
 
