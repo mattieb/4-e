@@ -30,12 +30,12 @@
 
 #define MAX_OBJECT_NAME_LENGTH 25
 
-const GBFS_FILE *findVolume(const void *start);
-const GBFS_FILE *nextVolume(const GBFS_FILE *currentVolume);
-const GBFS_FILE *nextVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume);
-const GBFS_FILE *previousVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume);
-int moreVolumes(const GBFS_FILE *currentVolume);
-size_t objectCount(const GBFS_FILE *volume);
-const void *getObject(const GBFS_FILE *volume, size_t index, char *name);
+const GBFS_FILE *find_volume(const void *start);
+const GBFS_FILE *next_volume(const GBFS_FILE *current_volume);
+const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
+const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
+int more_volumes_exist(const GBFS_FILE *current_volume);
+size_t object_count(const GBFS_FILE *volume);
+const void *get_object(const GBFS_FILE *volume, size_t index, char *name);
 
 #endif /* INCLUDE_VOLUMES_H */

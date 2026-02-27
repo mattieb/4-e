@@ -33,22 +33,22 @@
 #include "ui.h"
 #include "volumes.h"
 
-void waitUp(u16 key)
+void wait_for_keyup(u16 key)
 {
     while (~REG_KEYINPUT & key)
         VBlankIntrWait();
 }
 
-const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
+const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 {
-    const GBFS_FILE *currentVolume = initialVolume;
+    const GBFS_FILE *current_volume = initial_volume;
 
     while (1)
     {
-        u16 count = objectCount(currentVolume);
+        u16 count = object_count(current_volume);
         u16 page = 0;
         u16 selection = 0;
-        const void *selectedObject;
+        const void *selected_object;
 
         while (true)
         {
@@ -60,23 +60,23 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
             for (int index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
             {
                 char name[MAX_OBJECT_NAME_LENGTH];
-                const void *object = getObject(currentVolume, index, name);
+                const void *object = get_object(current_volume, index, name);
 
                 if (index == selection)
                 {
                     tte_set_special(CX_SKYBLUE);
-                    selectedObject = object;
-                    strncpy(selectedName, name, MAX_OBJECT_NAME_LENGTH);
+                    selected_object = object;
+                    strncpy(selected_name, name, MAX_OBJECT_NAME_LENGTH);
                 }
                 else
                     tte_set_special(CX_BLUE);
 
-                char contentType[MAX_CONTENT_TYPE_LENGTH];
-                char shortType[6];
+                char content_type[MAX_CONTENT_TYPE_LENGTH];
+                char truncated_type[6];
 
-                get_card_content_type(object, contentType);
-                snprintf(shortType, 6, "%.5s", contentType);
-                tte_printf("%5s ", shortType);
+                get_card_content_type(object, content_type);
+                snprintf(truncated_type, 6, "%.5s", content_type);
+                tte_printf("%5s ", truncated_type);
                
                 if (index == selection)
                     tte_set_special(CX_YELLOW);
@@ -97,12 +97,12 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
                         selection++;
                     else
                     {
-                        currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
-                        count = objectCount(currentVolume);
+                        current_volume = next_volume_or_loop(current_volume, initial_volume);
+                        count = object_count(current_volume);
                         selection = 0;
                     }
 
-                    waitUp(KEY_DOWN);
+                    wait_for_keyup(KEY_DOWN);
                     break;
                 }
 
@@ -112,12 +112,12 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
                         selection--;
                     else
                     {
-                        currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
-                        count = objectCount(currentVolume);
+                        current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                        count = object_count(current_volume);
                         selection = count - 1;
                     }
 
-                    waitUp(KEY_UP);
+                    wait_for_keyup(KEY_UP);
                     break;
                 }
 
@@ -128,12 +128,12 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
                     // would we move off the last page?
                     if (selection / PICKER_PAGE_SIZE > (count - 1) / PICKER_PAGE_SIZE)
                     {
-                        currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
-                        count = objectCount(currentVolume);
+                        current_volume = next_volume_or_loop(current_volume, initial_volume);
+                        count = object_count(current_volume);
                         selection = selection % PICKER_PAGE_SIZE;
                     }
 
-                    waitUp(KEY_RIGHT);
+                    wait_for_keyup(KEY_RIGHT);
                     break;
                 }
 
@@ -143,38 +143,38 @@ const void *pick(const GBFS_FILE *initialVolume, char *selectedName)
                         selection -= PICKER_PAGE_SIZE;
                     else
                     {
-                        currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
-                        count = objectCount(currentVolume);
+                        current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                        count = object_count(current_volume);
                         selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
                     }
 
-                    waitUp(KEY_LEFT);
+                    wait_for_keyup(KEY_LEFT);
                     break;
                 }
 
                 if (~REG_KEYINPUT & KEY_L)
                 {
-                    currentVolume = previousVolumeOrLoop(currentVolume, initialVolume);
-                    count = objectCount(currentVolume);
+                    current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                    count = object_count(current_volume);
                     selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
 
-                    waitUp(KEY_L);
+                    wait_for_keyup(KEY_L);
                     break;
                 }
 
                 if (~REG_KEYINPUT & KEY_R)
                 {
-                    currentVolume = nextVolumeOrLoop(currentVolume, initialVolume);
-                    count = objectCount(currentVolume);
+                    current_volume = next_volume_or_loop(current_volume, initial_volume);
+                    count = object_count(current_volume);
                     selection = selection % PICKER_PAGE_SIZE;
 
-                    waitUp(KEY_R);
+                    wait_for_keyup(KEY_R);
                     break;
                 }
 
                 if (~REG_KEYINPUT & KEY_A)
                 {
-                    return selectedObject;
+                    return selected_object;
                 }
             }
 

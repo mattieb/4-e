@@ -25,47 +25,47 @@
 
 #include "volumes.h"
 
-const GBFS_FILE *findVolume(const void *start)
+const GBFS_FILE *find_volume(const void *start)
 {
     return find_first_gbfs_file(start != 0 ? start : (void *)find_first_gbfs_file);
 }
 
-const GBFS_FILE *nextVolume(const GBFS_FILE *currentVolume)
+const GBFS_FILE *next_volume(const GBFS_FILE *current_volume)
 {
-    return find_first_gbfs_file(skip_gbfs_file(currentVolume));
+    return find_first_gbfs_file(skip_gbfs_file(current_volume));
 }
 
-const GBFS_FILE *nextVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume)
+const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
 {
-    const GBFS_FILE *next = nextVolume(currentVolume);
+    const GBFS_FILE *next = next_volume(current_volume);
     if (next == NULL)
-        return firstVolume;
+        return first_volume;
     return next;
 }
 
-const GBFS_FILE *previousVolumeOrLoop(const GBFS_FILE *currentVolume, const GBFS_FILE *firstVolume)
+const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
 {
-    const GBFS_FILE *candidate = firstVolume;
+    const GBFS_FILE *candidate = first_volume;
     do
     {
-        const GBFS_FILE *next = nextVolume(candidate);
-        if (next == currentVolume || next == NULL)
+        const GBFS_FILE *next = next_volume(candidate);
+        if (next == current_volume || next == NULL)
             return candidate;
         candidate = next;
     } while (1);
 }
 
-int moreVolumes(const GBFS_FILE *currentVolume)
+int more_volumes_exist(const GBFS_FILE *current_volume)
 {
-    return nextVolume(currentVolume) != 0;
+    return next_volume(current_volume) != 0;
 }
 
-size_t objectCount(const GBFS_FILE *volume)
+size_t object_count(const GBFS_FILE *volume)
 {
     return volume->dir_nmemb;
 }
 
-const void *getObject(const GBFS_FILE *volume, size_t index, char *name)
+const void *get_object(const GBFS_FILE *volume, size_t index, char *name)
 {
     return gbfs_get_nth_obj(volume, index, name, NULL);
 }

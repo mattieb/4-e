@@ -35,26 +35,30 @@
 
 int main(void)
 {
-    const GBFS_FILE *initialVolume;
+    const GBFS_FILE *initial_volume;
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
+    char meta[31];
+    char content_type[MAX_CONTENT_TYPE_LENGTH];
+    char set_type;
+    u8 set_number;
 
     setup_screen();
 
-    initialVolume = findVolume(0);
-    if (!initialVolume)
+    initial_volume = find_volume(0);
+    if (!initial_volume)
     {
         done("Please attach a GBFS volume.", NULL);
     }
 
-    if (!moreVolumes(initialVolume) && objectCount(initialVolume) == 1)
+    if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
     {
         // object should not be NULL, but we will end if it is
-        object = getObject(initialVolume, 1, name);
+        object = get_object(initial_volume, 1, name);
     }
     else
     {
-        object = pick(initialVolume, name);
+        object = pick(initial_volume, name);
     }
 
     if (object == NULL)
@@ -62,16 +66,11 @@ int main(void)
         done("Thank you for playing!", NULL);
     }
 
-    char meta[31];
-    char contentType[MAX_CONTENT_TYPE_LENGTH];
-    char setType;
-    u8 setNumber;
+    get_card_content_type(object, content_type);
+    set_type = get_set_type(object);
+    set_number = get_set_number(object);
 
-    get_card_content_type(object, contentType);
-    setType = get_set_type(object);
-    setNumber = get_set_number(object);
-
-    snprintf(meta, 31, "07-%c%03u %s Card", setType, setNumber, contentType);
+    snprintf(meta, 31, "07-%c%03u %s Card", set_type, set_number, content_type);
 
     status("Waiting... (B=cancel)", name, meta);
     setup_link();

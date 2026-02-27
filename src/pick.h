@@ -32,6 +32,6 @@
 
 #define PICKER_PAGE_SIZE 16
 
-const void *pick(const GBFS_FILE *initialVolume, char *name);
+const void *pick(const GBFS_FILE *initial_volume, char *name);
 
 #endif /* INCLUDE_PICK_H */
