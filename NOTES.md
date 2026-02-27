@@ -182,7 +182,16 @@ a pattern:
 Card contents are transmitted in their entirety during the contents
 step of the [card scanning protocol](#card-scanning-protocol).
 
-They are always 1998 bytes long.
+They are always 1998 bytes long. Regardless of the card type, they always start with the same two bytes:
+
+| Offset | Size | Value |
+| ------ | ---- | ----- |
+| 0      | 1    | Set number |
+| 1      | 1    | Set type (00 ⇒ "A", 03 ⇒ "C", 04 ⇒ "D", 05 ⇒ "E") |
+
+The set number matches the last part of the [physical e-Card number](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3_e-Reader_cards). For example, Classic World 1-1 is numbered 07-A001 and has a set number of 1, and Airship's Revenge is numbered 07-A051 and has a set number of 51.
+
+The set type matches the letter before the set number. For example, Classic World 1-1, 07-A001 has a set type of 0, "A". 
 
 #### Level contents
 
@@ -190,15 +199,10 @@ When the [card contents](#card-contents) is a level:
 
 | Offset | Size | Value |
 | ------ | ---- | ----- |
-| 0      | 1    | Level id |
-| 1      | 7    | Bytes: 00 ff ff ff ff ff 00
+| 0      | 1    | Card set number |
+| 1      | 1    | Card set type (always 00, "A") |
+| 2      | 6    | Bytes: ff ff ff ff ff 00
 | 8      | 1990 | [lcmp](#lcmp) |
-
-The level id matches the last part of the [e-Card
-number](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3_e-Reader_cards);
-for example, Classic World 1-1 is numbered 07-A001 and has level
-id is 1, and Airship's Revenge is numbered 07-A051 and has level
-id is 51.
 
 Official level ids 1-5 are "Classic" levels, 11-40 standard levels,
 and 50-53 promotional levels. Re-using official level ids may cause
