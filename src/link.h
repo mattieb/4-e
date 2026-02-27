@@ -57,7 +57,7 @@
 
 void setup_link();
 int wait_for_player_assignment();
-bool connect();
-void send_card(const void *card);
+int connect();
+int send_card(const void *card);
 
 #endif /* INCLUDE_LINK_H */

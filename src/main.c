@@ -74,16 +74,32 @@ int main(void)
 
     status("Waiting... (B=cancel)", name, meta);
     setup_link();
-    wait_for_player_assignment();
+    if (wait_for_player_assignment())
+    {
+        done("Cancelled.", NULL);
+    }
 
     status("Connecting... (B=cancel)", name, meta);
-    if (connect())
+    switch (connect())
     {
+    case 0:
+        break;
+    case 1:
+        done("Cancelled.", name);
+        break;
+    case 2:
         done("Connection failed.", name);
+        break;
+    default:
+        done("Internal error.", name);
+        break;
     }
 
     status("Sending... (B=cancel)", name, meta);
-    send_card(object);
+    if (send_card(object))
+    {
+        done("Cancelled.", NULL);
+    }
 
     done("Card data sent!", name);
 }

@@ -41,14 +41,24 @@ void wait_for_keyup(u16 key)
 
 const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 {
-    const GBFS_FILE *current_volume = initial_volume;
+    const GBFS_FILE *current_volume;
+    u16 count;
+    u16 page;
+    u16 selection;
+    const void *selected_object;
+    char name[MAX_OBJECT_NAME_LENGTH];
+    const void *object;
+    char content_type[MAX_CONTENT_TYPE_LENGTH];
+    char truncated_type[6];
+
+    current_volume = initial_volume;
 
     while (1)
     {
-        u16 count = object_count(current_volume);
-        u16 page = 0;
-        u16 selection = 0;
-        const void *selected_object;
+        count = object_count(current_volume);
+        page = 0;
+        selection = 0;
+        selected_object = NULL;
 
         while (true)
         {
@@ -59,8 +69,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
             for (int index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
             {
-                char name[MAX_OBJECT_NAME_LENGTH];
-                const void *object = get_object(current_volume, index, name);
+                object = get_object(current_volume, index, name);
 
                 if (index == selection)
                 {
@@ -71,13 +80,10 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                 else
                     tte_set_special(CX_BLUE);
 
-                char content_type[MAX_CONTENT_TYPE_LENGTH];
-                char truncated_type[6];
-
                 get_card_content_type(object, content_type);
                 snprintf(truncated_type, 6, "%.5s", content_type);
                 tte_printf("%5s ", truncated_type);
-               
+
                 if (index == selection)
                     tte_set_special(CX_YELLOW);
                 else

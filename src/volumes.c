@@ -37,7 +37,9 @@ const GBFS_FILE *next_volume(const GBFS_FILE *current_volume)
 
 const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
 {
-    const GBFS_FILE *next = next_volume(current_volume);
+    const GBFS_FILE *next;
+    
+    next = next_volume(current_volume);
     if (next == NULL)
         return first_volume;
     return next;
@@ -45,7 +47,9 @@ const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS
 
 const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
 {
-    const GBFS_FILE *candidate = first_volume;
+    const GBFS_FILE *candidate;
+    
+    candidate = first_volume;
     do
     {
         const GBFS_FILE *next = next_volume(candidate);

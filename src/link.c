@@ -60,71 +60,110 @@ int send(u16 data)
     return 0;
 }
 
-void send_until_receive(u16 data, u16 expect)
+int send_until_receive(u16 data, u16 expect)
 {
     u16 received;
+
     do
     {
-        send(data);
+        if (send(data))
+            return 1;
         received = REG_SIOMULTI0;
     } while (received != expect);
+    return 0;
 }
 
-u16 send_until_receive_not(u16 data, u16 except)
+u16 send_until_receive_not(u16 data, u16 except, int *error)
 {
     u16 received;
+
+    *error = 0;
     do
     {
-        send(data);
+        if (send(data))
+        {
+            *error = 1;
+            return 0;
+        }
         received = REG_SIOMULTI0;
     } while (received == except);
     return received;
 }
 
-bool connect()
+int connect()
 {
-    send_until_receive(HANDSHAKE_1, HANDSHAKE_1);
-    send_until_receive(HANDSHAKE_2, HANDSHAKE_2);
-    send_until_receive(HANDSHAKE_3, HANDSHAKE_3);
+    u16 card_request;
+    int error;
 
-    u16 cardRequest = send_until_receive_not(HANDSHAKE_3, HANDSHAKE_3);
+    if (send_until_receive(HANDSHAKE_1, HANDSHAKE_1))
+        return 1;
+    if (send_until_receive(HANDSHAKE_2, HANDSHAKE_2))
+        return 1;
+    if (send_until_receive(HANDSHAKE_3, HANDSHAKE_3))
+        return 1;
 
-    send_until_receive(GAME_ANIMATING, EREADER_ANIMATING);
-    send(EREADER_ANIMATING);
+    error = 0;
+    card_request = send_until_receive_not(HANDSHAKE_3, HANDSHAKE_3, &error);
+    if (error)
+        return 1;
 
-    switch (cardRequest)
+    if (send_until_receive(GAME_ANIMATING, EREADER_ANIMATING))
+        return 1;
+    if (send(EREADER_ANIMATING))
+        return 1;
+
+    switch (card_request)
     {
     case GAME_REQUEST_DEMO:
-        send_until_receive(EREADER_READY, GAME_READY_DEMO);
+        if (send_until_receive(EREADER_READY, GAME_READY_DEMO))
+            return 1;
         break;
 
     case GAME_REQUEST_POWERUP:
-        send_until_receive(EREADER_READY, GAME_READY_POWERUP);
+        if (send_until_receive(EREADER_READY, GAME_READY_POWERUP))
+            return 1;
         break;
 
     case GAME_REQUEST_LEVEL:
-        send_until_receive(EREADER_READY, GAME_READY_LEVEL);
+        if (send_until_receive(EREADER_READY, GAME_READY_LEVEL))
+            return 1;
         break;
 
     default:
-        return true;
+        return 2;
     }
 
-    send_until_receive(EREADER_SEND_READY, GAME_RECEIVE_READY);
-    return false;
+    if (send_until_receive(EREADER_SEND_READY, GAME_RECEIVE_READY))
+        return 1;
+
+    return 0;
 }
 
-void send_card(const void *card)
+int send_card(const void *card)
 {
-    send(EREADER_SEND_START);
-    u32 checksum = 0;
-    for (off_t o = CARD_HEADER_OFFSET; o < CARD_DATA_LENGTH; o += 2)
+    u32 checksum;
+    off_t offset;
+    u16 block;
+
+    if (send(EREADER_SEND_START))
+        return 1;
+
+    checksum = 0;
+
+    for (offset = CARD_HEADER_OFFSET; offset < CARD_DATA_LENGTH; offset += 2)
     {
-        u16 block = *(u16 *)(card + o);
-        send(block);
+        block = *(u16 *)(card + offset);
+        if (send(block))
+            return 1;
         checksum += block;
     }
-    send(checksum & 0xffff);
-    send(checksum >> 16);
-    send(EREADER_SEND_END);
+
+    if (send(checksum & 0xffff))
+        return 1;
+    if (send(checksum >> 16))
+        return 1;
+    if (send(EREADER_SEND_END))
+        return 1;
+
+    return 0;
 }

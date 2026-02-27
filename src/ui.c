@@ -55,6 +55,10 @@ void clear_screen()
     tte_set_special(CX_BROWN);
 }
 
+int centered_x(const char *message) {
+    return 120 - (strlen(message) * 4);
+}
+
 void status(const char *message, const char *name, const char *meta)
 {
     clear_screen();
@@ -73,11 +77,8 @@ void status(const char *message, const char *name, const char *meta)
         tte_write("\n");
     }
 
-    int len = strlen(message);
-    int x = 120 - (len * 4);
-
     tte_set_special(CX_SKYBLUE);
-    tte_set_pos(x, 76);
+    tte_set_pos(centered_x(message), 76);
     tte_write(message);
 }
 
@@ -91,10 +92,7 @@ void done(const char *message, const char *name)
         tte_write(name);
     }
 
-    int len = strlen(message);
-    int x = 120 - (len * 4);
-
-    tte_set_pos(x, 68);
+    tte_set_pos(centered_x(message), 68);
     tte_set_special(CX_RED);
     tte_write(message);
 
