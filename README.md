@@ -5,6 +5,8 @@
 [e-Reader cards](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3_e-Reader_cards) from the [Game
 Boy Advance](https://en.wikipedia.org/wiki/Game_Boy_Advance) it's running on to another running _Mario_. It uses decoded .bin files of those cards' data instead of printed cards an an actual [e-Reader](https://www.mariowiki.com/E-Reader).
 
+![The picker screen, showing levels from the Smaghetti site.](./doc/picker.png) ![The sending screen, showing 4-e waiting to transmit to _Mario_.](./doc/sending.png)
+
 It can send level, power-up, and demo cards between real Game Boys Advance and [Analogue Pockets](https://www.analogue.co/pocket) using link cables. It can also send cards between [mGBA](https://mgba.io) multiplayer windows. No e-Reader or e-Reader ROM is required.
 
 Need .bin files? The latest versions of the [Smaghetti](https://smaghetti.mattgreer.dev) editor for _Mario_ can save .bin files. Head to the flask icon in the lower-right corner of the editor to access Experiments—you can download your levels as .bin files there!
