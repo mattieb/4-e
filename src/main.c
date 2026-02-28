@@ -54,7 +54,7 @@ int main(void)
     if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
     {
         // object should not be NULL, but we will end if it is
-        object = get_object(initial_volume, 1, name);
+        object = get_object(initial_volume, 0, name);
     }
     else
     {
