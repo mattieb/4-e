@@ -1,65 +1,41 @@
 # 4-e
 
-A project to send [Super Mario Advance
-4](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3)
-[e-Reader](https://www.mariowiki.com/E-Reader) cards from one Game
-Boy Advance running 4-e to another running the game, using homebrew
-and decoded .bin versions of those cards instead of printed cards
-an an actual e-Reader.
+4-e sends [_Super Mario Advance
+4_](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3)
+[e-Reader cards](https://www.mariowiki.com/Super_Mario_Advance_4:_Super_Mario_Bros._3_e-Reader_cards) from the [Game
+Boy Advance](https://en.wikipedia.org/wiki/Game_Boy_Advance) it's running on to another running _Mario_. It uses decoded .bin files of those cards' data instead of printed cards an an actual [e-Reader](https://www.mariowiki.com/E-Reader).
 
-It has been tested to successfully and reliably send demo, power-up,
-and level cards between mGBA multiplayer windows as well as real
-Game Boys Advance and [Analogue Pockets](https://www.analogue.co/pocket).
+It can send level, power-up, and demo cards between real Game Boys Advance and [Analogue Pockets](https://www.analogue.co/pocket) using link cables. It can also send cards between [mGBA](https://mgba.io) multiplayer windows. No e-Reader or e-Reader ROM is required.
 
-I've written more about 4-e [on my
-blog](https://mattiebee.io/52283/introducing-4-e-super-mario-advance-4-e-cards-without-an-e-reader).
+Need .bin files? The latest versions of the [Smaghetti](https://smaghetti.mattgreer.dev) editor for _Mario_ can save .bin files. Head to the flask icon in the lower-right corner of the editor to access Experiments—you can download your levels as .bin files there!
 
 ## Usage
 
-1.  Build the 4-e.gba ROM or download it from
-    [releases](https://github.com/mattieb/4-e/releases).
+1.  Build the base "4-e.gba" ROM with [devkitARM](https://devkitpro.org/wiki/devkitARM), or download it from [releases](https://github.com/mattieb/4-e/releases).
 
-2.  Using [gbfs-web](https://mattiebee.app/gbfs-web), attach the
-    e-Card .bin files you wish to use to 4-e.gba, and save a new
-    ROM.
+2.  Using [gbfs-web](https://mattiebee.app/gbfs-web), attach the e-Card .bin files you wish to use to 4-e.gba, and save a new ROM.
 
-    -   You can also use the standard tools from
-        [GBFS](https://pineight.com/gba/#gbfs) to create a GBFS
-        file, then concatenate it to 4-e.gba.  (These tools are
-        also included in the "gba-tools" package in devkitARM.)
+    -   You can also use the standard tools from [GBFS](https://pineight.com/gba/#gbfs) to create a GBFS file, then concatenate it to 4-e.gba.  (These tools are also included in the "gba-tools" package in devkitARM.)
 
-    -   *New in v3.0!* If you're using the command-like GBFS tool, you can attach multiple GBFS files and page through them to organize your cards. For this to work, you will need to use the "padbin" tool to pad each GBFS file to 256 bytes.
+    -   *New in v3.0!* If you're using the command-line "gbfs" tool to build your GBFS files, and you use "padbin" to pad each GBFS file to 256 bytes, you can attach multiple GBFS files and quickly page through them to organize your cards.
 
-3.  Link two Game Boy Advance systems with a link cable.  The game
-    must be player 1, and 4-e must be player 2.
+3.  On one Game Boy Advance, run _Super Mario Advance 4_. Connect the player 1 end of a link cable to this system.
 
-4.  On the first system, run Super Mario Advance 4.
+4.  On another Game Boy Advance, run 4-e. Connect the player-2 end of the link cable to this system.
 
-5.  On the second system, run your custom 4-e ROM.
+5.  Pick the e-Card you wish you send from the list. (If your GBFS file only had one e-Card in it, it will be selected automatically; you won't see the list.) From this point on, you can cancel and reset by pressing B.
 
-6.  Pick the e-Card you wish you send from the list. If your GBFS
-    file only had one e-Card in it, it will be selected automatically.
-    From this point on, you can cancel and reset by pressing B.
+6.  On the first system, start the e-Reader communication process. 4-e will connect to the game automatically and try to send your card.
 
-7.  On the first system, start the e-Reader communication process.
-    4-e will connect to the game automatically and try to send your
-    card.
-
-8.  When the game has finished, press any button on 4-e to reset
-    so you can send another card if you wish.
+7.  When 4-e has finished its work, press any button to reset it. Now you can send another card, if you wish!
 
 ## Troubleshooting
 
-### 4-e doesn't respond when I start communication
-
 Check that your link cable is connected firmly and correctly.
 
--   If you're using the official Nintendo link cable, it must be
-    connected with the purple end to the game and the gray end to
-    4-e.
+-   If you're using the official Nintendo link cable, it must be connected with the purple end to the game and the gray end to 4-e.
 
--   If you're using the Analogue Pocket link cable, it must be
-    switched to GBA mode, not GB/C mode.
+-   If you're using the Analogue Pocket link cable, it must be switched to GBA mode, not GB/C mode. The end closest to the switch is player 1 (the _Mario_ end); the other end is player 2 (the 4-e end).
 
 ## Thanks
 
@@ -75,3 +51,7 @@ Ports](https://problemkaputt.de/gbatek.htm#gbacommunicationports))
 - [GBFS](https://pineight.com/gba/#gbfs)
 
 - [mGBA](https://mgba.io)
+
+A huge special thanks to the community over the past decades for digging into the e-Reader and _Super Mario Advance 4_. Without your work, I never could have pulled this off.
+
+And, of course, Nintendo. You didn't help any of us make _this_, but you did make the game I loved so much in the first place—inspiring me to see if I could take it further.
