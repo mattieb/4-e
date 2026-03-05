@@ -26,6 +26,8 @@
 #include <tonc.h>
 
 #include "graphics.h"
+#include "tiles.h"
+#include "tilemaps.h"
 
 void init_frame()
 {
@@ -42,69 +44,16 @@ void init_frame()
         tile->data[i] = 0x00000000;
 
     tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME];
-    for (i = 0; i <= 7; i++)
-        tile->data[i] = 0x22222222;
+    tonccpy(tile, tile_frame, 32);
 
     tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_HORIZONTAL_EDGE];
-    tile->data[0] = 0x22222222;
-    tile->data[1] = 0x22222222;
-    tile->data[2] = 0x22222222;
-    tile->data[3] = 0x33333333;
-    tile->data[4] = 0x00000000;
-    tile->data[5] = 0x00000000;
-    tile->data[6] = 0x00000000;
-    tile->data[7] = 0x00000000;
+    tonccpy(tile, tile_frame_horizontal_edge, 32);
 
     tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_VERTICAL_EDGE];
-    for (i = 0; i <= 7; i++)
-        tile->data[i] = 0x00003222;
+    tonccpy(tile, tile_frame_vertical_edge, 32);
 
     tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_CORNER];
-    tile->data[0] = 0x22222222;
-    tile->data[1] = 0x22222222;
-    tile->data[2] = 0x22222222;
-    tile->data[3] = 0x22222222;
-    tile->data[4] = 0x33222222;
-    tile->data[5] = 0x00322222;
-    tile->data[6] = 0x00032222;
-    tile->data[7] = 0x00032222;
+    tonccpy(tile, tile_frame_corner, 32);
 
-    for (x = 0; x <= 29; x++)
-    {
-        se_mem[FRAME_SCREENBLOCK][x] = TILE_FRAME;
-        se_mem[FRAME_SCREENBLOCK][(32 * 19) + x] = TILE_FRAME;
-
-        if (x >= 2 && x <= 27)
-        {
-            se_mem[FRAME_SCREENBLOCK][32 + x] = TILE_FRAME_HORIZONTAL_EDGE;
-            se_mem[FRAME_SCREENBLOCK][(32 * 18) + x] = TILE_FRAME_HORIZONTAL_EDGE | SE_VFLIP;
-        }
-        else
-            switch (x)
-            {
-            case 1:
-                for (y = 2; y <= 17; y++)
-                {
-                    se_mem[FRAME_SCREENBLOCK][(32 * y) + 1] = TILE_FRAME_VERTICAL_EDGE;
-                }
-                break;
-            case 28:
-                for (y = 2; y <= 17; y++)
-                {
-                    se_mem[FRAME_SCREENBLOCK][(32 * y) + 28] = TILE_FRAME_VERTICAL_EDGE | SE_HFLIP;
-                }
-                break;
-            }
-
-        for (y = 1; y <= 18; y++)
-        {
-            se_mem[FRAME_SCREENBLOCK][(32 * y)] = TILE_FRAME;
-            se_mem[FRAME_SCREENBLOCK][(32 * y) + 29] = TILE_FRAME;
-        }
-
-        se_mem[FRAME_SCREENBLOCK][32 + 1] = TILE_FRAME_CORNER;
-        se_mem[FRAME_SCREENBLOCK][32 + 28] = TILE_FRAME_CORNER | SE_HFLIP;
-        se_mem[FRAME_SCREENBLOCK][(32 * 18) + 1] = TILE_FRAME_CORNER | SE_VFLIP;
-        se_mem[FRAME_SCREENBLOCK][(32 * 18) + 28] = TILE_FRAME_CORNER | SE_HFLIP | SE_VFLIP;
-    }
+    tonccpy(se_mem[FRAME_SCREENBLOCK], tilemap_frame, 64 * 20);
 }

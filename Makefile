@@ -49,6 +49,8 @@ SOURCES		:=	src/background.c \
 			src/link.c \
 			src/main.c \
 			src/pick.c \
+			src/tilemaps.s \
+			src/tiles.s \
 			src/ui.c \
 			src/volumes.c \
 			src/window.c \

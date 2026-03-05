@@ -27,40 +27,30 @@
 
 #include "background.h"
 #include "graphics.h"
+#include "tiles.h"
 
 void init_background()
 {
     TILE *tile;
     int y;
     int x;
-    SCR_ENTRY entry;
 
     pal_bg_mem[0] = BACKGROUND_PATTERN_DARK_BLUE;
     pal_bg_mem[1] = BACKGROUND_PATTERN_LIGHT_BLUE;
 
     tile = &tile_mem[TILE_CHARBLOCK][TILE_DIAMOND_QUADRANT];
-    tile->data[0] = 0x00000000;
-    tile->data[1] = 0x10000000;
-    tile->data[2] = 0x11000000;
-    tile->data[3] = 0x11100000;
-    tile->data[4] = 0x11110000;
-    tile->data[5] = 0x11111000;
-    tile->data[6] = 0x11111100;
-    tile->data[7] = 0x11111110;
+    tonccpy(tile, tile_diamond_quadrant, 32);
 
-    for (y = 0; y <= 31; y++)
+    for (y = 0; y <= 31; y += 2)
     {
-        for (x = 0; x <= 31; x++)
+        for (x = 0; x <= 31; x += 2)
         {
-            entry = TILE_DIAMOND_QUADRANT;
-            if (y & 1)
-                entry |= SE_VFLIP;
-            if (x & 1)
-                entry |= SE_HFLIP;
-            se_mem[BACKGROUND_SCREENBLOCK][y * 32 + x] = entry;
+            se_mem[BACKGROUND_SCREENBLOCK][(y * 32) + x] = TILE_DIAMOND_QUADRANT;
+            se_mem[BACKGROUND_SCREENBLOCK][(y * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP;
+            se_mem[BACKGROUND_SCREENBLOCK][((y + 1) * 32) + x] = TILE_DIAMOND_QUADRANT | SE_VFLIP;
+            se_mem[BACKGROUND_SCREENBLOCK][((y + 1) * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
         }
     }
-
 }
 
 int background_scroll = 0;

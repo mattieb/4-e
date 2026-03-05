@@ -1,5 +1,5 @@
 
-//{{BLOCK(four)
+//{{BLOCK(four_font)
 
 #ifndef __FOUR__
 #define __FOUR__
@@ -14,4 +14,4 @@ extern const unsigned char fourWidths[128];
 
 #endif // __FOUR__
 
-//}}BLOCK(four)
+//}}BLOCK(four_font)

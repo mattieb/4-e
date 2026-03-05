@@ -41,6 +41,21 @@ void wait_for_keyup(u16 key)
         VBlankIntrWait();
 }
 
+void draw_pick_window()
+{
+    draw_window(2, 2, 27, 17);
+
+    tte_set_ink(2);
+    tte_set_pos(24, 129);
+    tte_write("\204 move");
+    
+    tte_set_pos(120 - (tte_get_text_size("\202\203 switch stacks").x / 2), 129);
+    tte_write("\202\203 switch stacks");
+    
+    tte_set_pos(217 - tte_get_text_size("\200 send").x, 129);
+    tte_write("\200 send");
+}
+
 const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 {
     const GBFS_FILE *current_volume;
@@ -56,17 +71,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
     current_volume = initial_volume;
 
-    draw_window(2, 2, 27, 17);
-
-    tte_set_ink(2);
-    tte_set_pos(24, 129);
-    tte_write("\204 move");
-    
-    tte_set_pos(120 - (tte_get_text_size("\202\203 switch stacks").x / 2), 129);
-    tte_write("\202\203 switch stacks");
-    
-    tte_set_pos(217 - tte_get_text_size("\200 send").x, 129);
-    tte_write("\200 send");
+    draw_pick_window();
 
     while (1)
     {
