@@ -28,7 +28,8 @@
 
 #include <tonc.h>
 
-#define TILE_CHARBLOCK 0
+// character (tile) base block, for tile artwork
+#define CBB 0
 
 #define TILE_EMPTY 0
 
@@ -44,24 +45,25 @@
 #define TILE_WINDOW_VERTICAL_EDGE 8
 #define TILE_WINDOW_CORNER 9
 
-#define BACKGROUND_SCREENBLOCK 31
-#define FRAME_SCREENBLOCK 30
-#define WINDOW_SCREENBLOCK 29
-#define TEXT_SCREENBLOCK 28
+// screen base block, for tilemaps
+#define SBB_BACKGROUND 31
+#define SBB_FRAME 30
+#define SBB_WINDOW 29
+#define SBB_TEXT 28
 
-#define BACKGROUND_PATTERN_DARK_BLUE RGB15(18, 21, 26)
-#define BACKGROUND_PATTERN_LIGHT_BLUE RGB15(23, 25, 28)
+#define CLR_PATTERN_DARK_BLUE RGB15(18, 21, 26)
+#define CLR_PATTERN_LIGHT_BLUE RGB15(23, 25, 28)
 
-#define FRAME_YELLOW RGB15(28, 28, 10)
-#define FRAME_INNER_EDGE_BLUE RGB15(9, 12, 14)
+#define CLR_FRAME_YELLOW RGB15(28, 28, 10)
+#define CLR_FRAME_EDGE_BLUE RGB15(9, 12, 14)
 
-#define WINDOW_WHITE RGB15(30, 30, 30)
-#define WINDOW_EDGE_BLUE RGB15(68, 96, 192)
+#define CLR_WINDOW_WHITE RGB15(30, 30, 30)
+#define CLR_WINDOW_EDGE_BLUE RGB15(68, 96, 192)
 
-#define TEXT_LIGHT_BLUE RGB15(8, 12, 20)
-#define TEXT_DARK_BLUE RGB15(4, 6, 10)
-#define TEXT_HIGHLIGHT_YELLOW RGB15(26, 23, 8)
-#define TEXT_RED RGB15(17, 6, 5)
+#define CLR_TEXT_LIGHT_BLUE RGB15(8, 12, 20)
+#define CLR_TEXT_DARK_BLUE RGB15(4, 6, 10)
+#define CLR_TEXT_YELLOW RGB15(26, 23, 8)
+#define CLR_TEXT_RED RGB15(17, 6, 5)
 
 void start_display();
 void animate_frame();

@@ -36,16 +36,16 @@ void init_ui()
 {
     tte_init_chr4c(
         3,
-        BG_CBB(2) | BG_SBB(TEXT_SCREENBLOCK) | BG_PRIO(0),
+        BG_CBB(2) | BG_SBB(SBB_TEXT) | BG_PRIO(0),
         0xF000,
         0x0201,
-        TEXT_LIGHT_BLUE,
+        CLR_TEXT_LIGHT_BLUE,
         &fourFont,
         NULL);
 
-    pal_bg_bank[15][2] = TEXT_DARK_BLUE;
-    pal_bg_bank[15][3] = TEXT_HIGHLIGHT_YELLOW;
-    pal_bg_bank[15][4] = TEXT_RED;
+    pal_bg_bank[15][2] = CLR_TEXT_DARK_BLUE;
+    pal_bg_bank[15][3] = CLR_TEXT_YELLOW;
+    pal_bg_bank[15][4] = CLR_TEXT_RED;
 
     tte_set_ink(3);
     tte_set_pos(16, 151);

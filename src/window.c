@@ -33,14 +33,14 @@ void init_window()
     TILE *tile;
     int i;
 
-    pal_bg_mem[4] = WINDOW_WHITE;
-    pal_bg_mem[5] = WINDOW_EDGE_BLUE;
+    pal_bg_mem[4] = CLR_WINDOW_WHITE;
+    pal_bg_mem[5] = CLR_WINDOW_EDGE_BLUE;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_WINDOW];
+    tile = &tile_mem[CBB][TILE_WINDOW];
     for (i = 0; i <= 7; i++)
         tile->data[i] = 0x44444444;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_WINDOW_HORIZONTAL_EDGE];
+    tile = &tile_mem[CBB][TILE_WINDOW_HORIZONTAL_EDGE];
     tile->data[0] = 0x55555555;
     tile->data[1] = 0x44444444;
     tile->data[2] = 0x44444444;
@@ -50,11 +50,11 @@ void init_window()
     tile->data[6] = 0x44444444;
     tile->data[7] = 0x44444444;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_WINDOW_VERTICAL_EDGE];
+    tile = &tile_mem[CBB][TILE_WINDOW_VERTICAL_EDGE];
     for (i = 0; i <= 7; i++)
         tile->data[i] = 0x44444445;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_WINDOW_CORNER];
+    tile = &tile_mem[CBB][TILE_WINDOW_CORNER];
     tile->data[0] = 0x55555000;
     tile->data[1] = 0x44444500;
     tile->data[2] = 0x44444450;
@@ -96,7 +96,7 @@ void draw_window(int left_x, int upper_y, int right_x, int lower_y)
             else
                 entry = TILE_WINDOW;
 
-            se_mem[WINDOW_SCREENBLOCK][(32 * y) + x] = entry;
+            se_mem[SBB_WINDOW][(32 * y) + x] = entry;
         }
     }
 }
@@ -108,7 +108,7 @@ void erase_window()
 
     for (y = 2; y <= 17; y++) 
         for (x = 2; x <= 27; x++)
-            se_mem[WINDOW_SCREENBLOCK][(32 * y) + x] = TILE_EMPTY;
+            se_mem[SBB_WINDOW][(32 * y) + x] = TILE_EMPTY;
 
     tte_erase_rect(0, 0, 239, 151);
 }

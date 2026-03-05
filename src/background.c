@@ -35,20 +35,20 @@ void init_background()
     int y;
     int x;
 
-    pal_bg_mem[0] = BACKGROUND_PATTERN_DARK_BLUE;
-    pal_bg_mem[1] = BACKGROUND_PATTERN_LIGHT_BLUE;
+    pal_bg_mem[0] = CLR_PATTERN_DARK_BLUE;
+    pal_bg_mem[1] = CLR_PATTERN_LIGHT_BLUE;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_DIAMOND_QUADRANT];
+    tile = &tile_mem[CBB][TILE_DIAMOND_QUADRANT];
     tonccpy(tile, tile_diamond_quadrant, 32);
 
     for (y = 0; y <= 31; y += 2)
     {
         for (x = 0; x <= 31; x += 2)
         {
-            se_mem[BACKGROUND_SCREENBLOCK][(y * 32) + x] = TILE_DIAMOND_QUADRANT;
-            se_mem[BACKGROUND_SCREENBLOCK][(y * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP;
-            se_mem[BACKGROUND_SCREENBLOCK][((y + 1) * 32) + x] = TILE_DIAMOND_QUADRANT | SE_VFLIP;
-            se_mem[BACKGROUND_SCREENBLOCK][((y + 1) * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
+            se_mem[SBB_BACKGROUND][(y * 32) + x] = TILE_DIAMOND_QUADRANT;
+            se_mem[SBB_BACKGROUND][(y * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP;
+            se_mem[SBB_BACKGROUND][((y + 1) * 32) + x] = TILE_DIAMOND_QUADRANT | SE_VFLIP;
+            se_mem[SBB_BACKGROUND][((y + 1) * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
         }
     }
 }

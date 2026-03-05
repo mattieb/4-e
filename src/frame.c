@@ -36,24 +36,24 @@ void init_frame()
     int y;
     int x;
 
-    pal_bg_mem[2] = FRAME_YELLOW;
-    pal_bg_mem[3] = FRAME_INNER_EDGE_BLUE;
+    pal_bg_mem[2] = CLR_FRAME_YELLOW;
+    pal_bg_mem[3] = CLR_FRAME_EDGE_BLUE;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_EMPTY];
+    tile = &tile_mem[CBB][TILE_EMPTY];
     for (i = 0; i <= 7; i++)
         tile->data[i] = 0x00000000;
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME];
+    tile = &tile_mem[CBB][TILE_FRAME];
     tonccpy(tile, tile_frame, 32);
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_HORIZONTAL_EDGE];
+    tile = &tile_mem[CBB][TILE_FRAME_HORIZONTAL_EDGE];
     tonccpy(tile, tile_frame_horizontal_edge, 32);
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_VERTICAL_EDGE];
+    tile = &tile_mem[CBB][TILE_FRAME_VERTICAL_EDGE];
     tonccpy(tile, tile_frame_vertical_edge, 32);
 
-    tile = &tile_mem[TILE_CHARBLOCK][TILE_FRAME_CORNER];
+    tile = &tile_mem[CBB][TILE_FRAME_CORNER];
     tonccpy(tile, tile_frame_corner, 32);
 
-    tonccpy(se_mem[FRAME_SCREENBLOCK], tilemap_frame, 64 * 20);
+    tonccpy(se_mem[SBB_FRAME], tilemap_frame, 64 * 20);
 }
