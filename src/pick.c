@@ -27,11 +27,13 @@
 #include <string.h>
 #include <tonc.h>
 
-#include "gbfs.h"
 #include "card.h"
+#include "gbfs.h"
+#include "graphics.h"
 #include "pick.h"
 #include "ui.h"
 #include "volumes.h"
+#include "window.h"
 
 void wait_for_keyup(u16 key)
 {
@@ -44,14 +46,27 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
     const GBFS_FILE *current_volume;
     u16 count;
     u16 page;
+    u16 index;
+    u16 offset;
     u16 selection;
     const void *selected_object;
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
     char content_type[MAX_CONTENT_TYPE_LENGTH];
-    char truncated_type[6];
 
     current_volume = initial_volume;
+
+    draw_window(2, 2, 27, 17);
+
+    tte_set_ink(2);
+    tte_set_pos(24, 129);
+    tte_write("\204 move");
+    
+    tte_set_pos(120 - (tte_get_text_size("\202\203 switch stacks").x / 2), 129);
+    tte_write("\202\203 switch stacks");
+    
+    tte_set_pos(217 - tte_get_text_size("\200 send").x, 129);
+    tte_write("\200 send");
 
     while (1)
     {
@@ -60,42 +75,44 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
         selection = 0;
         selected_object = NULL;
 
+        tte_erase_rect(0, 0, 239, 128);
+
         while (true)
         {
-            clear_screen();
-
-            tte_set_special(CX_SKYBLUE);
-            tte_printf("+/L/R=move, A=pick %5d/%5d\n\n", selection + 1, count);
-
-            for (int index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
+            for (index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
             {
                 object = get_object(current_volume, index, name);
+                offset = index - page;
 
                 if (index == selection)
                 {
-                    tte_set_special(CX_SKYBLUE);
+                    schr4c_rect(&tte_get_context()->dst, 23, 23 + (offset * 10), 217, 32 + (offset * 10), 3);
+                    tte_set_ink(1);
+                    tte_set_pos(24, 24 + (offset * 10));
+                    tte_write(">");
                     selected_object = object;
                     strncpy(selected_name, name, MAX_OBJECT_NAME_LENGTH);
                 }
-                else
-                    tte_set_special(CX_BLUE);
+                else 
+                {
+                    tte_erase_rect(23, 23 + (offset * 10), 217, 32 + (offset * 10));
+                }
+
+                // TODO clear rest of page somehow?
+                // TODO also things are slow and interrupts animation
 
                 get_card_content_type(object, content_type);
-                snprintf(truncated_type, 6, "%.5s", content_type);
-                tte_printf("%5s ", truncated_type);
-
-                if (index == selection)
-                    tte_set_special(CX_YELLOW);
-                else
-                    tte_set_special(CX_BROWN);
-
+                tte_set_ink(2);
+                tte_set_pos(70 - tte_get_text_size(content_type).x, 24 + (offset * 10));
+                tte_write(content_type);
+                tte_set_ink(1);
+                tte_set_pos(73, 24 + (offset * 10));
                 tte_write(name);
-                tte_write("\n");
             }
 
             while (true)
             {
-                VBlankIntrWait();
+                animate_frame();
 
                 if (~REG_KEYINPUT & KEY_DOWN)
                 {

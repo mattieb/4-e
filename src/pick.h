@@ -30,7 +30,7 @@
 
 #include "gbfs.h"
 
-#define PICKER_PAGE_SIZE 16
+#define PICKER_PAGE_SIZE 10
 
 const void *pick(const GBFS_FILE *initial_volume, char *name);
 

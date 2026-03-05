@@ -23,18 +23,35 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_UI_H
-#define INCLUDE_UI_H
+#include <tonc.h>
 
-#define CX_BLUE 0x1000
-#define CX_SKYBLUE 0x2000
-#define CX_YELLOW 0x3000
-#define CX_BROWN 0x4000
-#define CX_RED 0x5000
+#include "graphics.h"
 
-void init_ui();
-void clear_screen();
-void status(const char *message, const char *name, const char *meta);
-void fatal(const char *message, const char *name);
+u8 delay;
+u8 scroll;
 
-#endif /* INCLUDE_UI_H */
+void start_display()
+{
+    REG_BG0CNT = BG_CBB(0) | BG_SBB(BACKGROUND_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(3);
+    REG_BG1CNT = BG_CBB(0) | BG_SBB(FRAME_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(2);
+    REG_BG2CNT = BG_CBB(0) | BG_SBB(WINDOW_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(1);
+    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_BG3;
+
+    irq_init(NULL);
+    irq_enable(II_VBLANK);
+
+    delay = 0;
+    scroll = 0;
+}
+
+void animate_frame()
+{
+    VBlankIntrWait();
+
+    if ((delay++ & 0x3) == 0)
+    {
+        scroll++;
+        REG_BG0HOFS = scroll;
+        REG_BG0VOFS = scroll;
+    }
+}

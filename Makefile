@@ -44,6 +44,8 @@ GRAPHICS	:=
 SOURCES		:=	src/background.c \
 			src/card.c \
 			src/frame.c \
+			src/four_font.s \
+			src/graphics.c \
 			src/link.c \
 			src/main.c \
 			src/pick.c \

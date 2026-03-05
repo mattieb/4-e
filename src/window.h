@@ -28,5 +28,6 @@
 
 void init_window();
 void draw_window(int left_x, int upper_y, int right_x, int lower_y);
+void erase_window();
 
 #endif /* INCLUDE_WINDOW_H */

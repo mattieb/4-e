@@ -26,23 +26,33 @@
 #include <string.h>
 #include <tonc.h>
 
+#include "four_font.h"
+#include "graphics.h"
 #include "link.h"
 #include "ui.h"
+#include "window.h"
 
-void setup_screen()
+void init_ui()
 {
-    irq_init(NULL);
-    irq_enable(II_VBLANK);
+    tte_init_chr4c(
+        3,
+        BG_CBB(2) | BG_SBB(TEXT_SCREENBLOCK) | BG_PRIO(0),
+        0xF000,
+        0x0201,
+        TEXT_LIGHT_BLUE,
+        &fourFont,
+        NULL);
 
-    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
-    tte_init_se(0, BG_CBB(0) | BG_SBB(31), 0, CLR_MEDGRAY, 14, NULL, NULL);
-    tte_init_con();
+    pal_bg_bank[15][2] = TEXT_DARK_BLUE;
+    pal_bg_bank[15][3] = TEXT_HIGHLIGHT_YELLOW;
+    pal_bg_bank[15][4] = TEXT_RED;
 
-    pal_bg_bank[1][15] = 0x51aa;
-    pal_bg_bank[2][15] = 0x6ed1;
-    pal_bg_bank[3][15] = 0x039e;
-    pal_bg_bank[4][15] = 0x0234;
-    pal_bg_bank[5][15] = 0x0cbb;
+    tte_set_ink(3);
+    tte_set_pos(16, 151);
+    tte_write("mattiebee.dev/4-e");
+    char version[] = "v4.0";
+    tte_set_pos(225 - tte_get_text_size(version).x, 151);
+    tte_write(version);
 }
 
 void clear_screen()
@@ -55,7 +65,8 @@ void clear_screen()
     tte_set_special(CX_BROWN);
 }
 
-int centered_x(const char *message) {
+int centered_x(const char *message)
+{
     return 120 - (strlen(message) * 4);
 }
 
@@ -82,30 +93,62 @@ void status(const char *message, const char *name, const char *meta)
     tte_write(message);
 }
 
-void done(const char *message, const char *name)
+void fatal(const char *message, const char *name)
 {
-    clear_screen();
+    char instruction[] = "Press any button to reset.";
+    POINT16 message_size;
+    POINT16 instruction_size;
+    POINT16 minimum_size;
+    int blocks_x;
+    int blocks_y;
+    
+    message_size = tte_get_text_size(message);
+    instruction_size = tte_get_text_size(instruction);
+    if (message_size.x > instruction_size.x)
+    minimum_size = message_size;
+    else
+    minimum_size = instruction_size;
 
-    if (name != NULL)
-    {
-        tte_set_special(CX_SKYBLUE);
-        tte_write(name);
-    }
+    blocks_x = (minimum_size.x / 8) + 2;
+    blocks_y = (minimum_size.y / 8) + 2;
 
-    tte_set_pos(centered_x(message), 68);
-    tte_set_special(CX_RED);
+    draw_window(
+        13 - (blocks_x / 2),
+        7 - (blocks_y / 2),
+        16 + (blocks_x / 2),
+        12 + (blocks_y / 2));
+        // 6, 4, 23, 15);
+
+    // if (name != NULL)
+    // {
+    //     tte_set_special(CX_SKYBLUE);
+    //     tte_write(name);
+    // }
+
+    tte_set_pos(120 - (message_size.x / 2), 70 - (message_size.y / 2));
+    tte_set_ink(4);
     tte_write(message);
 
-    tte_set_pos(16, 84);
-    tte_set_special(CX_SKYBLUE);
-    tte_write("Press any button to reset.");
+    tte_set_pos(120 - (instruction_size.x / 2), 90 - (instruction_size.y / 2));
+    tte_set_ink(2);
+    tte_write(instruction);
+
+    // tte_set_pos(centered_x(message), 68);
+    // tte_set_special(CX_RED);
+    // tte_write(message);
+
+    // tte_set_pos(16, 84);
+    // tte_set_special(CX_SKYBLUE);
+    // tte_write("Press any button to reset.");
 
     while (REG_KEYINPUT != KEY_MASK)
-        VBlankIntrWait();
+        animate_frame();
     while (REG_KEYINPUT == KEY_MASK)
-        VBlankIntrWait();
+        animate_frame();
     while (REG_KEYINPUT != KEY_MASK)
-        VBlankIntrWait();
+        animate_frame();
+
+    erase_window();
 
     SoftReset();
 }

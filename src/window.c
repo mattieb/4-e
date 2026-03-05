@@ -71,13 +71,13 @@ void draw_window(int left_x, int upper_y, int right_x, int lower_y)
     int x;
     SCR_ENTRY entry;
 
-    for (y = 2; y <= 17; y++)
+    erase_window();
+
+    for (y = upper_y; y <= lower_y; y++)
     {
-        for (x = 2; x <= 27; x++)
+        for (x = left_x; x <= right_x; x++)
         {
-            if (y < upper_y || y > lower_y || x < left_x || x > right_x)
-                entry = TILE_EMPTY;
-            else if (y == upper_y && x == left_x)
+            if (y == upper_y && x == left_x)
                 entry = TILE_WINDOW_CORNER;
             else if (y == upper_y && x == right_x)
                 entry = TILE_WINDOW_CORNER | SE_HFLIP;
@@ -99,4 +99,16 @@ void draw_window(int left_x, int upper_y, int right_x, int lower_y)
             se_mem[WINDOW_SCREENBLOCK][(32 * y) + x] = entry;
         }
     }
+}
+
+void erase_window()
+{
+    int y;
+    int x;
+
+    for (y = 2; y <= 17; y++) 
+        for (x = 2; x <= 27; x++)
+            se_mem[WINDOW_SCREENBLOCK][(32 * y) + x] = TILE_EMPTY;
+
+    tte_erase_rect(0, 0, 239, 151);
 }

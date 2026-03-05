@@ -39,53 +39,41 @@
 
 int main(void)
 {
-    init_background();
-    init_frame();
-    init_window();
-    draw_window(2, 2, 27, 17);
-
-    REG_BG0CNT = BG_CBB(0) | BG_SBB(BACKGROUND_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(3);
-    REG_BG1CNT = BG_CBB(0) | BG_SBB(FRAME_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(2);
-    REG_BG2CNT = BG_CBB(0) | BG_SBB(WINDOW_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(1);
-    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2;
-
-    irq_init(NULL);
-    irq_enable(II_VBLANK);
-
-    while (1)
-    {
-        VBlankIntrWait();
-        VBlankIntrWait();
-        VBlankIntrWait();
-        VBlankIntrWait();
-        animate_background();
-    }
-
-    // const GBFS_FILE *initial_volume;
-    // char name[MAX_OBJECT_NAME_LENGTH];
-    // const void *object;
+    const GBFS_FILE *initial_volume;
+    char name[MAX_OBJECT_NAME_LENGTH];
+    const void *object;
     // char meta[31];
     // char content_type[MAX_CONTENT_TYPE_LENGTH];
     // char set_type;
     // u8 set_number;
 
-    // setup_screen();
+    init_background();
+    init_frame();
+    init_window();
+    init_ui();
+    
+    start_display();
 
-    // initial_volume = find_volume(0);
-    // if (!initial_volume)
-    // {
-    //     done("Please attach a GBFS volume.", NULL);
-    // }
+    initial_volume = find_volume(0);
+    if (!initial_volume)
+    {
+        fatal("No cards attached. See instructions.", NULL);
+    }
 
-    // if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
-    // {
-    //     // object should not be NULL, but we will end if it is
-    //     object = get_object(initial_volume, 1, name);
-    // }
-    // else
-    // {
-    //     object = pick(initial_volume, name);
-    // }
+    if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
+    {
+        // object should not be NULL, but we will end if it is
+        object = get_object(initial_volume, 1, name);
+    }
+    else
+    {
+        object = pick(initial_volume, name);
+    }
+
+    while (1)
+    {
+        animate_frame();
+    }
 
     // if (object == NULL)
     // {
