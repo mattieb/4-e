@@ -41,8 +41,16 @@ AUDIO_FILES	:=
 GRAPHICS	:=
 
 # Source files to compile
-SOURCES		:=	src/card.c src/link.c src/main.c src/pick.c src/ui.c \
-				src/volumes.c vendor/libgbfs/source/libgbfs.c
+SOURCES		:=	src/background.c \
+			src/card.c \
+			src/frame.c \
+			src/link.c \
+			src/main.c \
+			src/pick.c \
+			src/ui.c \
+			src/volumes.c \
+			src/window.c \
+			vendor/libgbfs/source/libgbfs.c
 
 # Include directories
 INCLUDES	:=	src vendor/libgbfs/include 

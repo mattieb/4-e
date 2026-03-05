@@ -26,80 +26,106 @@
 #include <stdio.h>
 #include <tonc.h>
 
+#include "background.h"
+#include "frame.h"
 #include "gbfs.h"
+#include "graphics.h"
 #include "card.h"
 #include "link.h"
 #include "pick.h"
 #include "ui.h"
 #include "volumes.h"
+#include "window.h"
 
 int main(void)
 {
-    const GBFS_FILE *initial_volume;
-    char name[MAX_OBJECT_NAME_LENGTH];
-    const void *object;
-    char meta[31];
-    char content_type[MAX_CONTENT_TYPE_LENGTH];
-    char set_type;
-    u8 set_number;
+    init_background();
+    init_frame();
+    init_window();
+    draw_window(2, 2, 27, 17);
 
-    setup_screen();
+    REG_BG0CNT = BG_CBB(0) | BG_SBB(BACKGROUND_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(3);
+    REG_BG1CNT = BG_CBB(0) | BG_SBB(FRAME_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(2);
+    REG_BG2CNT = BG_CBB(0) | BG_SBB(WINDOW_SCREENBLOCK) | BG_4BPP | BG_REG_32x32 | BG_PRIO(1);
+    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2;
 
-    initial_volume = find_volume(0);
-    if (!initial_volume)
+    irq_init(NULL);
+    irq_enable(II_VBLANK);
+
+    while (1)
     {
-        done("Please attach a GBFS volume.", NULL);
+        VBlankIntrWait();
+        VBlankIntrWait();
+        VBlankIntrWait();
+        VBlankIntrWait();
+        animate_background();
     }
 
-    if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
-    {
-        // object should not be NULL, but we will end if it is
-        object = get_object(initial_volume, 0, name);
-    }
-    else
-    {
-        object = pick(initial_volume, name);
-    }
+    // const GBFS_FILE *initial_volume;
+    // char name[MAX_OBJECT_NAME_LENGTH];
+    // const void *object;
+    // char meta[31];
+    // char content_type[MAX_CONTENT_TYPE_LENGTH];
+    // char set_type;
+    // u8 set_number;
 
-    if (object == NULL)
-    {
-        done("Thank you for playing!", NULL);
-    }
+    // setup_screen();
 
-    get_card_content_type(object, content_type);
-    set_type = get_set_type(object);
-    set_number = get_set_number(object);
+    // initial_volume = find_volume(0);
+    // if (!initial_volume)
+    // {
+    //     done("Please attach a GBFS volume.", NULL);
+    // }
 
-    snprintf(meta, 31, "07-%c%03u %s Card", set_type, set_number, content_type);
+    // if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
+    // {
+    //     // object should not be NULL, but we will end if it is
+    //     object = get_object(initial_volume, 1, name);
+    // }
+    // else
+    // {
+    //     object = pick(initial_volume, name);
+    // }
 
-    status("Waiting... (B=cancel)", name, meta);
-    setup_link();
-    if (wait_for_player_assignment())
-    {
-        done("Cancelled.", NULL);
-    }
+    // if (object == NULL)
+    // {
+    //     done("Thank you for playing!", NULL);
+    // }
 
-    status("Connecting... (B=cancel)", name, meta);
-    switch (connect())
-    {
-    case 0:
-        break;
-    case 1:
-        done("Cancelled.", name);
-        break;
-    case 2:
-        done("Connection failed.", name);
-        break;
-    default:
-        done("Internal error.", name);
-        break;
-    }
+    // get_card_content_type(object, content_type);
+    // set_type = get_set_type(object);
+    // set_number = get_set_number(object);
 
-    status("Sending... (B=cancel)", name, meta);
-    if (send_card(object))
-    {
-        done("Cancelled.", NULL);
-    }
+    // snprintf(meta, 31, "07-%c%03u %s Card", set_type, set_number, content_type);
 
-    done("Card data sent!", name);
+    // status("Waiting... (B=cancel)", name, meta);
+    // setup_link();
+    // if (wait_for_player_assignment())
+    // {
+    //     done("Cancelled.", NULL);
+    // }
+
+    // status("Connecting... (B=cancel)", name, meta);
+    // switch (connect())
+    // {
+    // case 0:
+    //     break;
+    // case 1:
+    //     done("Cancelled.", name);
+    //     break;
+    // case 2:
+    //     done("Connection failed.", name);
+    //     break;
+    // default:
+    //     done("Internal error.", name);
+    //     break;
+    // }
+
+    // status("Sending... (B=cancel)", name, meta);
+    // if (send_card(object))
+    // {
+    //     done("Cancelled.", NULL);
+    // }
+
+    // done("Card data sent!", name);
 }
