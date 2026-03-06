@@ -32,7 +32,6 @@
 void init_frame()
 {
     TILE *tile;
-    int i;
 
     pal_bg_mem[2] = CLR_FRAME_YELLOW;
     pal_bg_mem[3] = CLR_FRAME_EDGE_BLUE;
