@@ -55,21 +55,6 @@ void init_ui()
     tte_write(version);
 }
 
-void clear_screen()
-{
-    tte_erase_screen();
-    tte_set_pos(0, 152);
-    tte_set_special(CX_BLUE);
-    tte_write("mattiebee.dev/4-e         v3.0");
-    tte_set_pos(0, 0);
-    tte_set_special(CX_BROWN);
-}
-
-int centered_x(const char *message)
-{
-    return 120 - (strlen(message) * 4);
-}
-
 void status(const char *message, const char *instruction, const char *header_left, const char *header_right)
 {
     POINT16 message_size;
