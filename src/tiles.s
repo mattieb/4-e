@@ -93,4 +93,56 @@ tile_frame_corner:
     .word 0x00032222
     .word 0x00032222
 
+    .section .rodata
+    .align 2
+    .global tile_window
+tile_window:
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+
+    .section .rodata
+    .align 2
+    .global tile_window_horizontal_edge
+tile_window_horizontal_edge:
+    .word 0x55555555
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+    .word 0x44444444
+
+    .section .rodata
+    .align 2
+    .global tile_window_vertical_edge
+tile_window_vertical_edge:
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+
+    .section .rodata
+    .align 2
+    .global tile_window_corner
+tile_window_corner:
+    .word 0x55550000
+    .word 0x44445500
+    .word 0x44444450
+    .word 0x44444450
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+    .word 0x44444445
+
 @}}BLOCK(tiles)

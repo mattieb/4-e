@@ -30,6 +30,16 @@
 u8 delay;
 u8 scroll;
 
+void init_graphics()
+{
+    TILE *tile;
+    int i;
+
+    tile = &tile_mem[CBB][TILE_EMPTY];
+    for (i = 0; i <= 7; i++)
+        tile->data[i] = 0x00000000;
+}
+
 void handle_vblank_interrupt()
 {
     if ((delay++ & 0x3) == 0)

@@ -25,44 +25,28 @@
 
 #include <tonc.h>
 
+#include "tiles.h"
 #include "window.h"
 #include "graphics.h"
 
 void init_window()
 {
     TILE *tile;
-    int i;
 
     pal_bg_mem[4] = CLR_WINDOW_WHITE;
     pal_bg_mem[5] = CLR_WINDOW_EDGE_BLUE;
 
     tile = &tile_mem[CBB][TILE_WINDOW];
-    for (i = 0; i <= 7; i++)
-        tile->data[i] = 0x44444444;
+    tonccpy(tile, tile_window, 32);
 
     tile = &tile_mem[CBB][TILE_WINDOW_HORIZONTAL_EDGE];
-    tile->data[0] = 0x55555555;
-    tile->data[1] = 0x44444444;
-    tile->data[2] = 0x44444444;
-    tile->data[3] = 0x44444444;
-    tile->data[4] = 0x44444444;
-    tile->data[5] = 0x44444444;
-    tile->data[6] = 0x44444444;
-    tile->data[7] = 0x44444444;
+    tonccpy(tile, tile_window_horizontal_edge, 32);
 
     tile = &tile_mem[CBB][TILE_WINDOW_VERTICAL_EDGE];
-    for (i = 0; i <= 7; i++)
-        tile->data[i] = 0x44444445;
+    tonccpy(tile, tile_window_vertical_edge, 32);
 
     tile = &tile_mem[CBB][TILE_WINDOW_CORNER];
-    tile->data[0] = 0x55550000;
-    tile->data[1] = 0x44445500;
-    tile->data[2] = 0x44444450;
-    tile->data[3] = 0x44444450;
-    tile->data[4] = 0x44444445;
-    tile->data[5] = 0x44444445;
-    tile->data[6] = 0x44444445;
-    tile->data[7] = 0x44444445;
+    tonccpy(tile, tile_window_corner, 32);
 }
 
 void draw_window(int left_x, int upper_y, int right_x, int lower_y)

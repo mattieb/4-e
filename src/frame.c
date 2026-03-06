@@ -33,15 +33,9 @@ void init_frame()
 {
     TILE *tile;
     int i;
-    int y;
-    int x;
 
     pal_bg_mem[2] = CLR_FRAME_YELLOW;
     pal_bg_mem[3] = CLR_FRAME_EDGE_BLUE;
-
-    tile = &tile_mem[CBB][TILE_EMPTY];
-    for (i = 0; i <= 7; i++)
-        tile->data[i] = 0x00000000;
 
     tile = &tile_mem[CBB][TILE_FRAME];
     tonccpy(tile, tile_frame, 32);

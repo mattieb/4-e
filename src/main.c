@@ -42,11 +42,12 @@ int main(void)
     const GBFS_FILE *initial_volume;
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
-    char meta[31];
+    char meta[20];
     char content_type[MAX_CONTENT_TYPE_LENGTH];
     char set_type;
     u8 set_number;
 
+    init_graphics();
     init_background();
     init_frame();
     init_window();
@@ -79,16 +80,16 @@ int main(void)
     set_type = get_set_type(object);
     set_number = get_set_number(object);
 
-    snprintf(meta, 31, "07-%c%03u %s", set_type, set_number, content_type);
+    snprintf(meta, 20, "%s (07-%c%03u)", content_type, set_type, set_number);
 
-    status("Waiting...", "Start communication, or cancel with \201.", name, meta);
+    status(1, "Waiting...", "Start communication, or cancel with \201.", name, meta);
     setup_link();
     if (wait_for_player_assignment())
     {
         fatal("Cancelled.");
     }
 
-    status("Connecting...", "Please wait, or cancel with \201.", name, meta);
+    status(1, "Connecting...", "Please wait, or cancel with \201.", name, meta);
     switch (connect())
     {
     case 0:
@@ -104,11 +105,12 @@ int main(void)
         break;
     }
 
-    status("Sending...", "Please wait, or cancel with \201.", name, meta);
+    status(1, "Sending...", "Please wait, or cancel with \201.", name, meta);
     if (send_card(object))
     {
         fatal("Cancelled.");
     }
 
-    fatal("Card data sent!");
+    status(1, "Done!", "Press any key to reset.", name, meta);
+    wait_for_key_and_reset();
 }

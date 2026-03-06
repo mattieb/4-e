@@ -55,7 +55,7 @@ void init_ui()
     tte_write(version);
 }
 
-void status(const char *message, const char *instruction, const char *header_left, const char *header_right)
+void status(u16 message_ink, const char *message, const char *instruction, const char *header_left, const char *header_right)
 {
     POINT16 message_size;
     POINT16 instruction_size;
@@ -96,24 +96,26 @@ void status(const char *message, const char *instruction, const char *header_lef
     tte_set_ink(3);
     tte_set_pos((left_x * 8) + 8, 39);
     tte_write(header_left);
-
-    tte_set_ink(3);
     tte_set_pos((right_x * 8) + 1 - header_right_size.x, 39);
     tte_write(header_right);
 
+    tte_set_ink(message_ink);
     tte_set_pos(120 - (message_size.x / 2), 80 - (message_size.y / 2));
-    tte_set_ink(4);
     tte_write(message);
 
-    tte_set_pos(120 - (instruction_size.x / 2), 114);
     tte_set_ink(2);
+    tte_set_pos(120 - (instruction_size.x / 2), 114);
     tte_write(instruction);
 }
 
 void fatal(const char *message)
 {
-    status(message, "Press any button to reset.", NULL, NULL);
+    status(4, message, "Press any button to reset.", NULL, NULL);
+    wait_for_key_and_reset();
+}
 
+void wait_for_key_and_reset()
+{
     while (REG_KEYINPUT != KEY_MASK)
         VBlankIntrWait();
     while (REG_KEYINPUT == KEY_MASK)

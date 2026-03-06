@@ -65,6 +65,7 @@
 #define CLR_TEXT_YELLOW RGB15(26, 23, 8)
 #define CLR_TEXT_RED RGB15(17, 6, 5)
 
+void init_graphics();
 void start_display();
 
 #endif /* INCLUDE_GRAPHICS_H */
