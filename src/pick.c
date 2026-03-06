@@ -48,10 +48,10 @@ void draw_pick_window()
     tte_set_ink(2);
     tte_set_pos(24, 129);
     tte_write("\204 move");
-    
+
     tte_set_pos(120 - (tte_get_text_size("\202\203 switch stacks").x / 2), 129);
     tte_write("\202\203 switch stacks");
-    
+
     tte_set_pos(217 - tte_get_text_size("\200 send").x, 129);
     tte_write("\200 send");
 }
@@ -59,11 +59,13 @@ void draw_pick_window()
 const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 {
     const GBFS_FILE *current_volume;
-    u16 count;
-    u16 page;
-    u16 index;
-    u16 offset;
-    u16 selection;
+    unsigned short count;
+    int page;
+    int last_page;
+    unsigned short index;
+    unsigned short offset;
+    int selection;
+    int last_selection;
     const void *selected_object;
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
@@ -73,47 +75,62 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
     draw_pick_window();
 
-    while (1)
+    while (true)
     {
         count = object_count(current_volume);
         page = 0;
+        last_page = 0;
         selection = 0;
+        last_selection = -1;
         selected_object = NULL;
 
-        tte_erase_rect(0, 0, 239, 128);
+        tte_erase_rect(23, 23, 217, 122);
 
         while (true)
         {
-            for (index = page; index < count && index < page + PICKER_PAGE_SIZE; index++)
+            if (selection != last_selection || page != last_page)
             {
-                object = get_object(current_volume, index, name);
-                offset = index - page;
-
-                if (index == selection)
+                for (offset = 0; offset < PICKER_PAGE_SIZE; offset++)
                 {
-                    schr4c_rect(&tte_get_context()->dst, 23, 23 + (offset * 10), 217, 32 + (offset * 10), 3);
-                    tte_set_ink(1);
-                    tte_set_pos(24, 24 + (offset * 10));
-                    tte_write(">");
-                    selected_object = object;
-                    strncpy(selected_name, name, MAX_OBJECT_NAME_LENGTH);
-                }
-                else 
-                {
-                    tte_erase_rect(23, 23 + (offset * 10), 217, 32 + (offset * 10));
-                }
+                    index = page + offset;
+                    object = index < count ? get_object(current_volume, index, name) : NULL;
 
-                // TODO clear rest of page somehow?
-                // TODO also things are slow and interrupts animation
+                    if (index == selection)
+                    {
+                        schr4c_rect(&tte_get_context()->dst, 23, 23 + (offset * 10), 217, 32 + (offset * 10), 3);
+                        tte_set_ink(1);
+                        tte_set_pos(24, 24 + (offset * 10));
+                        tte_write(">");
+                        selected_object = object;
+                        strncpy(selected_name, name, MAX_OBJECT_NAME_LENGTH);
+                    }
+                    else if (index == last_selection || page != last_page)
+                    {
+                        tte_erase_rect(23, 23 + (offset * 10), 217, 32 + (offset * 10));
+                    }
 
-                get_card_content_type(object, content_type);
-                tte_set_ink(2);
-                tte_set_pos(70 - tte_get_text_size(content_type).x, 24 + (offset * 10));
-                tte_write(content_type);
-                tte_set_ink(1);
-                tte_set_pos(73, 24 + (offset * 10));
-                tte_write(name);
+                    if (object != NULL)
+                    {
+                        get_card_content_type(object, content_type);
+                        tte_set_ink(2);
+                        tte_set_pos(70 - tte_get_text_size(content_type).x, 24 + (offset * 10));
+                        tte_write(content_type);
+                        tte_set_ink(1);
+                        tte_set_pos(73, 24 + (offset * 10));
+                        tte_write(name);
+                    }
+                }
             }
+
+            // char status[100];
+            // tte_set_ink(1);
+            // tte_set_pos(1, 1);
+            // tte_erase_line();
+            // snprintf(status, 100, "selection=%i(%i) page=%i(%i) count=%i volume=%x", selection, last_selection, page, last_page, count, current_volume);
+            // tte_write(status);
+
+            last_page = page;
+            last_selection = selection;
 
             while (true)
             {
@@ -127,6 +144,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     {
                         current_volume = next_volume_or_loop(current_volume, initial_volume);
                         count = object_count(current_volume);
+                        last_page = -1; // force redraw
                         selection = 0;
                     }
 
@@ -142,6 +160,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     {
                         current_volume = previous_volume_or_loop(current_volume, initial_volume);
                         count = object_count(current_volume);
+                        last_page = -1;
                         selection = count - 1;
                     }
 
@@ -158,6 +177,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     {
                         current_volume = next_volume_or_loop(current_volume, initial_volume);
                         count = object_count(current_volume);
+                        last_page = -1;
                         selection = selection % PICKER_PAGE_SIZE;
                     }
 
@@ -173,6 +193,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     {
                         current_volume = previous_volume_or_loop(current_volume, initial_volume);
                         count = object_count(current_volume);
+                        last_page = -1;
                         selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
                     }
 
@@ -184,6 +205,9 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                 {
                     current_volume = previous_volume_or_loop(current_volume, initial_volume);
                     count = object_count(current_volume);
+                    page = 0;
+                    selection = 0;
+                    last_page = -1;
                     selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
 
                     wait_for_keyup(KEY_L);
@@ -194,6 +218,9 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                 {
                     current_volume = next_volume_or_loop(current_volume, initial_volume);
                     count = object_count(current_volume);
+                    page = 0;
+                    selection = 0;
+                    last_page = -1;
                     selection = selection % PICKER_PAGE_SIZE;
 
                     wait_for_keyup(KEY_R);

@@ -34,7 +34,7 @@
 
 void init_ui();
 void clear_screen();
-void status(const char *message, const char *name, const char *meta);
+void status(const char *message, const char *name, const char *header_left, const char *header_right);
 void fatal(const char *message);
 
 #endif /* INCLUDE_UI_H */

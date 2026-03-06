@@ -34,8 +34,8 @@ const GBFS_FILE *find_volume(const void *start);
 const GBFS_FILE *next_volume(const GBFS_FILE *current_volume);
 const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
 const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
-int more_volumes_exist(const GBFS_FILE *current_volume);
-size_t object_count(const GBFS_FILE *volume);
-const void *get_object(const GBFS_FILE *volume, size_t index, char *name);
+bool more_volumes_exist(const GBFS_FILE *current_volume);
+unsigned short object_count(const GBFS_FILE *volume);
+const void *get_object(const GBFS_FILE *volume, unsigned short index, char *name);
 
 #endif /* INCLUDE_VOLUMES_H */

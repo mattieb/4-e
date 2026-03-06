@@ -42,10 +42,10 @@ int main(void)
     const GBFS_FILE *initial_volume;
     char name[MAX_OBJECT_NAME_LENGTH];
     const void *object;
-    // char meta[31];
-    // char content_type[MAX_CONTENT_TYPE_LENGTH];
-    // char set_type;
-    // u8 set_number;
+    char meta[31];
+    char content_type[MAX_CONTENT_TYPE_LENGTH];
+    char set_type;
+    u8 set_number;
 
     init_background();
     init_frame();
@@ -70,50 +70,45 @@ int main(void)
         object = pick(initial_volume, name);
     }
 
-    while (1)
+    if (object == NULL)
     {
-        VBlankIntrWait();
+        fatal("Error reading cards. See instructions.");
     }
 
-    // if (object == NULL)
-    // {
-    //     done("Thank you for playing!", NULL);
-    // }
+    get_card_content_type(object, content_type);
+    set_type = get_set_type(object);
+    set_number = get_set_number(object);
 
-    // get_card_content_type(object, content_type);
-    // set_type = get_set_type(object);
-    // set_number = get_set_number(object);
+    snprintf(meta, 31, "07-%c%03u %s", set_type, set_number, content_type);
 
-    // snprintf(meta, 31, "07-%c%03u %s Card", set_type, set_number, content_type);
+    status("Waiting...", "Start communication, or cancel with \201.", name, meta);
+    setup_link();
+    if (wait_for_player_assignment())
+    {
+        fatal("Cancelled.");
+    }
 
-    // status("Waiting... (B=cancel)", name, meta);
-    // setup_link();
-    // if (wait_for_player_assignment())
-    // {
-    //     done("Cancelled.", NULL);
-    // }
+    status("Connecting...", "Please wait, or cancel with \201.", name, meta);
+    switch (connect())
+    {
+    case 0:
+        break;
+    case 1:
+        fatal("Cancelled.");
+        break;
+    case 2:
+        fatal("Connection failed.");
+        break;
+    default:
+        fatal("Internal error.");
+        break;
+    }
 
-    // status("Connecting... (B=cancel)", name, meta);
-    // switch (connect())
-    // {
-    // case 0:
-    //     break;
-    // case 1:
-    //     done("Cancelled.", name);
-    //     break;
-    // case 2:
-    //     done("Connection failed.", name);
-    //     break;
-    // default:
-    //     done("Internal error.", name);
-    //     break;
-    // }
+    status("Sending...", "Please wait, or cancel with \201.", name, meta);
+    if (send_card(object))
+    {
+        fatal("Cancelled.");
+    }
 
-    // status("Sending... (B=cancel)", name, meta);
-    // if (send_card(object))
-    // {
-    //     done("Cancelled.", NULL);
-    // }
-
-    // done("Card data sent!", name);
+    fatal("Card data sent!");
 }

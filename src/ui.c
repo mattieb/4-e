@@ -70,61 +70,64 @@ int centered_x(const char *message)
     return 120 - (strlen(message) * 4);
 }
 
-void status(const char *message, const char *name, const char *meta)
+void status(const char *message, const char *instruction, const char *header_left, const char *header_right)
 {
-    clear_screen();
-
-    if (name != NULL)
-    {
-        tte_set_special(CX_SKYBLUE);
-        tte_write(name);
-        tte_write("\n");
-    }
-
-    if (meta != NULL)
-    {
-        tte_set_special(CX_BLUE);
-        tte_write(meta);
-        tte_write("\n");
-    }
-
-    tte_set_special(CX_SKYBLUE);
-    tte_set_pos(centered_x(message), 76);
-    tte_write(message);
-}
-
-void fatal(const char *message)
-{
-    char instruction[] = "Press any button to reset.";
     POINT16 message_size;
     POINT16 instruction_size;
-    POINT16 minimum_size;
-    int blocks_x;
-    int blocks_y;
+    POINT16 header_left_size;
+    POINT16 header_right_size;
+    s16 minimum_x;
+    s16 total_header_x;
+    s16 blocks_x;
+    u8 left_x;
+    u8 right_x;
 
     message_size = tte_get_text_size(message);
     instruction_size = tte_get_text_size(instruction);
     if (message_size.x > instruction_size.x)
-        minimum_size = message_size;
+        minimum_x = message_size.x;
     else
-        minimum_size = instruction_size;
+        minimum_x = instruction_size.x;
 
-    blocks_x = (minimum_size.x / 8) + 2;
-    blocks_y = (minimum_size.y / 8) + 2;
+    if (header_left != NULL)
+        header_left_size = tte_get_text_size(header_left);
+    else
+        header_left_size.x = header_left_size.y = 0;
 
-    draw_window(
-        13 - (blocks_x / 2),
-        7 - (blocks_y / 2),
-        16 + (blocks_x / 2),
-        12 + (blocks_y / 2));
+    if (header_right != NULL)
+        header_right_size = tte_get_text_size(header_right);
+    else
+        header_right_size.x = header_right_size.y = 0;
 
-    tte_set_pos(120 - (message_size.x / 2), 70 - (message_size.y / 2));
+    total_header_x = header_left_size.x + header_right_size.x;
+    if (minimum_x < total_header_x)
+        minimum_x = total_header_x;
+
+    blocks_x = (minimum_x / 8);
+    left_x = 13 - (blocks_x / 2);
+    right_x = 16 + (blocks_x / 2);
+    draw_window(left_x, 4, right_x, 15);
+
+    tte_set_ink(3);
+    tte_set_pos((left_x * 8) + 8, 39);
+    tte_write(header_left);
+
+    tte_set_ink(3);
+    tte_set_pos((right_x * 8) + 1 - header_right_size.x, 39);
+    tte_write(header_right);
+
+    tte_set_pos(120 - (message_size.x / 2), 80 - (message_size.y / 2));
     tte_set_ink(4);
     tte_write(message);
 
-    tte_set_pos(120 - (instruction_size.x / 2), 90 - (instruction_size.y / 2));
+    tte_set_pos(120 - (instruction_size.x / 2), 114);
     tte_set_ink(2);
     tte_write(instruction);
+}
+
+void fatal(const char *message)
+{
+    status(message, "Press any button to reset.", NULL, NULL);
 
     while (REG_KEYINPUT != KEY_MASK)
         VBlankIntrWait();

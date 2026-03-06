@@ -23,6 +23,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdbool.h>
+
 #include "volumes.h"
 
 const GBFS_FILE *find_volume(const void *start)
@@ -56,20 +58,20 @@ const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const 
         if (next == current_volume || next == NULL)
             return candidate;
         candidate = next;
-    } while (1);
+    } while (true);
 }
 
-int more_volumes_exist(const GBFS_FILE *current_volume)
+bool more_volumes_exist(const GBFS_FILE *current_volume)
 {
     return next_volume(current_volume) != 0;
 }
 
-size_t object_count(const GBFS_FILE *volume)
+unsigned short object_count(const GBFS_FILE *volume)
 {
     return volume->dir_nmemb;
 }
 
-const void *get_object(const GBFS_FILE *volume, size_t index, char *name)
+const void *get_object(const GBFS_FILE *volume, unsigned short index, char *name)
 {
     return gbfs_get_nth_obj(volume, index, name, NULL);
 }
