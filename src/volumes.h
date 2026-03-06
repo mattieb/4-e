@@ -26,6 +26,8 @@
 #ifndef INCLUDE_VOLUMES_H
 #define INCLUDE_VOLUMES_H
 
+#include <stdbool.h>
+
 #include "gbfs.h"
 
 #define MAX_OBJECT_NAME_LENGTH 25

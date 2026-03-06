@@ -29,6 +29,9 @@
 #include "graphics.h"
 #include "tiles.h"
 
+static u8 wait;
+static u8 scroll;
+
 void init_background()
 {
     TILE *tile;
@@ -51,13 +54,17 @@ void init_background()
             se_mem[SBB_BACKGROUND][((y + 1) * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
         }
     }
-}
 
-int background_scroll = 0;
+    wait = 0;
+    scroll = 0;
+}
 
 void animate_background()
 {
-    background_scroll++;
-    REG_BG0HOFS = background_scroll;
-    REG_BG0VOFS = background_scroll;
+    if ((wait++ & 0x3) == 0)
+    {
+        scroll++;
+        REG_BG0HOFS = scroll;
+        REG_BG0VOFS = scroll;
+    }
 }

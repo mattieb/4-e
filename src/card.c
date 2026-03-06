@@ -30,7 +30,7 @@
 
 u8 get_set_type_byte(const void *card)
 {
-    return *(u8 *)(card + SET_TYPE_BYTE_OFFSET);
+    return *((const u8 *)card + SET_TYPE_BYTE_OFFSET);
 }
 
 int get_card_content_type(const void *card, char *content_type)

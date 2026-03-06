@@ -206,7 +206,6 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     current_volume = previous_volume_or_loop(current_volume, initial_volume);
                     count = object_count(current_volume);
                     page = 0;
-                    selection = 0;
                     last_page = -1;
                     selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
 
@@ -219,7 +218,6 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     current_volume = next_volume_or_loop(current_volume, initial_volume);
                     count = object_count(current_volume);
                     page = 0;
-                    selection = 0;
                     last_page = -1;
                     selection = selection % PICKER_PAGE_SIZE;
 
@@ -238,7 +236,5 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
             page = (selection / PICKER_PAGE_SIZE) * PICKER_PAGE_SIZE;
         }
-
-        return 0;
     }
 }

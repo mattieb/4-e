@@ -26,7 +26,7 @@
 #ifndef INCLUDE_BACKGROUND_H
 #define INCLUDE_BACKGROUND_H
 
-void animate_background();
 void init_background();
+void animate_background();
 
 #endif /* INCLUDE_BACKGROUND_H */

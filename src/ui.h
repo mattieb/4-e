@@ -26,15 +26,8 @@
 #ifndef INCLUDE_UI_H
 #define INCLUDE_UI_H
 
-#define CX_BLUE 0x1000
-#define CX_SKYBLUE 0x2000
-#define CX_YELLOW 0x3000
-#define CX_BROWN 0x4000
-#define CX_RED 0x5000
-
 void init_ui();
-void clear_screen();
-void status(u16 message_ink, const char *message, const char *name, const char *header_left, const char *header_right);
+void status(u16 message_ink, const char *message, const char *instruction, const char *header_left, const char *header_right);
 void fatal(const char *message);
 void wait_for_key_and_reset();
 

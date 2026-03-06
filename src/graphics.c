@@ -25,10 +25,8 @@
 
 #include <tonc.h>
 
+#include "background.h"
 #include "graphics.h"
-
-u8 delay;
-u8 scroll;
 
 void init_graphics()
 {
@@ -42,19 +40,11 @@ void init_graphics()
 
 void handle_vblank_interrupt()
 {
-    if ((delay++ & 0x3) == 0)
-    {
-        scroll++;
-        REG_BG0HOFS = scroll;
-        REG_BG0VOFS = scroll;
-    }
+    animate_background();
 }
 
 void start_display()
 {
-    delay = 0;
-    scroll = 0;
-
     REG_BG0CNT = BG_CBB(0) | BG_SBB(SBB_BACKGROUND) | BG_4BPP | BG_REG_32x32 | BG_PRIO(3);
     REG_BG1CNT = BG_CBB(0) | BG_SBB(SBB_FRAME) | BG_4BPP | BG_REG_32x32 | BG_PRIO(2);
     REG_BG2CNT = BG_CBB(0) | BG_SBB(SBB_WINDOW) | BG_4BPP | BG_REG_32x32 | BG_PRIO(1);
