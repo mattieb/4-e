@@ -117,7 +117,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
             while (true)
             {
-                animate_frame();
+                VBlankIntrWait();
 
                 if (~REG_KEYINPUT & KEY_DOWN)
                 {

@@ -66,6 +66,5 @@
 #define CLR_TEXT_RED RGB15(17, 6, 5)
 
 void start_display();
-void animate_frame();
 
 #endif /* INCLUDE_GRAPHICS_H */

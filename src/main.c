@@ -57,7 +57,7 @@ int main(void)
     initial_volume = find_volume(0);
     if (!initial_volume)
     {
-        fatal("No cards attached. See instructions.", NULL);
+        fatal("No cards attached. See instructions.");
     }
 
     if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
@@ -72,7 +72,7 @@ int main(void)
 
     while (1)
     {
-        animate_frame();
+        VBlankIntrWait();
     }
 
     // if (object == NULL)

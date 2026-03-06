@@ -93,7 +93,7 @@ void status(const char *message, const char *name, const char *meta)
     tte_write(message);
 }
 
-void fatal(const char *message, const char *name)
+void fatal(const char *message)
 {
     char instruction[] = "Press any button to reset.";
     POINT16 message_size;
@@ -101,13 +101,13 @@ void fatal(const char *message, const char *name)
     POINT16 minimum_size;
     int blocks_x;
     int blocks_y;
-    
+
     message_size = tte_get_text_size(message);
     instruction_size = tte_get_text_size(instruction);
     if (message_size.x > instruction_size.x)
-    minimum_size = message_size;
+        minimum_size = message_size;
     else
-    minimum_size = instruction_size;
+        minimum_size = instruction_size;
 
     blocks_x = (minimum_size.x / 8) + 2;
     blocks_y = (minimum_size.y / 8) + 2;
@@ -117,13 +117,6 @@ void fatal(const char *message, const char *name)
         7 - (blocks_y / 2),
         16 + (blocks_x / 2),
         12 + (blocks_y / 2));
-        // 6, 4, 23, 15);
-
-    // if (name != NULL)
-    // {
-    //     tte_set_special(CX_SKYBLUE);
-    //     tte_write(name);
-    // }
 
     tte_set_pos(120 - (message_size.x / 2), 70 - (message_size.y / 2));
     tte_set_ink(4);
@@ -133,20 +126,12 @@ void fatal(const char *message, const char *name)
     tte_set_ink(2);
     tte_write(instruction);
 
-    // tte_set_pos(centered_x(message), 68);
-    // tte_set_special(CX_RED);
-    // tte_write(message);
-
-    // tte_set_pos(16, 84);
-    // tte_set_special(CX_SKYBLUE);
-    // tte_write("Press any button to reset.");
-
     while (REG_KEYINPUT != KEY_MASK)
-        animate_frame();
+        VBlankIntrWait();
     while (REG_KEYINPUT == KEY_MASK)
-        animate_frame();
+        VBlankIntrWait();
     while (REG_KEYINPUT != KEY_MASK)
-        animate_frame();
+        VBlankIntrWait();
 
     erase_window();
 
