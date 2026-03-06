@@ -55,10 +55,10 @@ void init_window()
         tile->data[i] = 0x44444445;
 
     tile = &tile_mem[CBB][TILE_WINDOW_CORNER];
-    tile->data[0] = 0x55555000;
-    tile->data[1] = 0x44444500;
+    tile->data[0] = 0x55550000;
+    tile->data[1] = 0x44445500;
     tile->data[2] = 0x44444450;
-    tile->data[3] = 0x44444445;
+    tile->data[3] = 0x44444450;
     tile->data[4] = 0x44444445;
     tile->data[5] = 0x44444445;
     tile->data[6] = 0x44444445;
@@ -77,24 +77,33 @@ void draw_window(int left_x, int upper_y, int right_x, int lower_y)
     {
         for (x = left_x; x <= right_x; x++)
         {
-            if (y == upper_y && x == left_x)
-                entry = TILE_WINDOW_CORNER;
-            else if (y == upper_y && x == right_x)
-                entry = TILE_WINDOW_CORNER | SE_HFLIP;
-            else if (y == lower_y && x == left_x)
-                entry = TILE_WINDOW_CORNER | SE_VFLIP;
-            else if (y == lower_y && x == right_x)
-                entry = TILE_WINDOW_CORNER | SE_HFLIP | SE_VFLIP;
-            else if (y == upper_y)
-                entry = TILE_WINDOW_HORIZONTAL_EDGE;
+            if (y == upper_y)
+            {
+                if (x == left_x)
+                    entry = TILE_WINDOW_CORNER;
+                else if (x == right_x)
+                    entry = TILE_WINDOW_CORNER | SE_HFLIP;
+                else
+                    entry = TILE_WINDOW_HORIZONTAL_EDGE;
+            }
             else if (y == lower_y)
-                entry = TILE_WINDOW_HORIZONTAL_EDGE | SE_VFLIP;
-            else if (x == left_x)
-                entry = TILE_WINDOW_VERTICAL_EDGE;
-            else if (x == right_x)
-                entry = TILE_WINDOW_VERTICAL_EDGE | SE_HFLIP;
+            {
+                if (x == left_x)
+                    entry = TILE_WINDOW_CORNER | SE_VFLIP;
+                else if (x == right_x)
+                    entry = TILE_WINDOW_CORNER | SE_HFLIP | SE_VFLIP;
+                else
+                    entry = TILE_WINDOW_HORIZONTAL_EDGE | SE_VFLIP;
+            }
             else
-                entry = TILE_WINDOW;
+            {
+                if (x == left_x)
+                    entry = TILE_WINDOW_VERTICAL_EDGE;
+                else if (x == right_x)
+                    entry = TILE_WINDOW_VERTICAL_EDGE | SE_HFLIP;
+                else
+                    entry = TILE_WINDOW;
+            }
 
             se_mem[SBB_WINDOW][(32 * y) + x] = entry;
         }
@@ -106,7 +115,7 @@ void erase_window()
     int y;
     int x;
 
-    for (y = 2; y <= 17; y++) 
+    for (y = 2; y <= 17; y++)
         for (x = 2; x <= 27; x++)
             se_mem[SBB_WINDOW][(32 * y) + x] = TILE_EMPTY;
 

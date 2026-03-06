@@ -45,14 +45,14 @@ tile_frame_horizontal_edge:
     .align 2
     .global tile_frame_vertical_edge
 tile_frame_vertical_edge:
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
-    .word 0x00032222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
+    .word 0x00003222
 
 
     .section .rodata
