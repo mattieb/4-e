@@ -152,7 +152,7 @@ int send_card(const void *card)
 
     for (offset = CARD_HEADER_OFFSET; offset < CARD_DATA_LENGTH; offset += 2)
     {
-        block = *(u16 *)(card + offset);
+        block = *(const u16 *)((const u8 *)card + offset);
         if (send(block))
             return 1;
         checksum += block;

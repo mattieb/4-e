@@ -72,5 +72,5 @@ char get_set_type(const void *card)
 
 u8 get_set_number(const void *card)
 {
-    return *(u8 *)(card + SET_NUMBER_BYTE_OFFSET);
+    return *((const u8 *)card + SET_NUMBER_BYTE_OFFSET);
 }

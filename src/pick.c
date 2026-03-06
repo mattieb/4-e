@@ -122,13 +122,6 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                 }
             }
 
-            // char status[100];
-            // tte_set_ink(1);
-            // tte_set_pos(1, 1);
-            // tte_erase_line();
-            // snprintf(status, 100, "selection=%i(%i) page=%i(%i) count=%i volume=%x", selection, last_selection, page, last_page, count, current_volume);
-            // tte_write(status);
-
             last_page = page;
             last_selection = selection;
 
