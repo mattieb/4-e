@@ -32,47 +32,52 @@
 #include "ui.h"
 #include "window.h"
 
+#define BG3 3
+
 void init_ui()
 {
     tte_init_chr4c(
-        3,
+        BG3,
         BG_CBB(2) | BG_SBB(SBB_TEXT) | BG_PRIO(0),
-        0xF000,
-        0x0201,
-        CLR_TEXT_LIGHT_BLUE,
+        SE_PALBANK(15),
+        bytes2word(1, 0, 0, 0), // ink color 1, other colors 0
+        CLR_TEXT_LIGHT_BLUE,    // color 1
         &fourFont,
         NULL);
 
-    pal_bg_bank[15][2] = CLR_TEXT_DARK_BLUE;
-    pal_bg_bank[15][3] = CLR_TEXT_YELLOW;
-    pal_bg_bank[15][4] = CLR_TEXT_RED;
+    pal_bg_bank[15][CATTR_DARK_BLUE] = CLR_TEXT_DARK_BLUE;
+    pal_bg_bank[15][CATTR_YELLOW] = CLR_TEXT_YELLOW;
+    pal_bg_bank[15][CATTR_RED] = CLR_TEXT_RED;
 
-    tte_set_ink(3);
+    tte_set_ink(CATTR_YELLOW);
     tte_set_pos(16, 151);
     tte_write("mattiebee.dev/4-e");
+
     char version[] = "v4.0";
     tte_set_pos(225 - tte_get_text_size(version).x, 151);
     tte_write(version);
 }
 
-void status(u16 message_ink, const char *message, const char *instruction, const char *header_left, const char *header_right)
+void status(u16 message_ink, const char *message,
+            const char *instruction,
+            const char *header_left, const char *header_right)
 {
     POINT16 message_size;
     POINT16 instruction_size;
     POINT16 header_left_size;
     POINT16 header_right_size;
-    s16 minimum_x;
-    s16 total_header_x;
-    s16 blocks_x;
-    u8 left_x;
-    u8 right_x;
+    s16 min_width;
+    s16 header_width;
+    s16 blocks_width;
+    u8 left;
+    u8 right;
 
     message_size = tte_get_text_size(message);
     instruction_size = tte_get_text_size(instruction);
     if (message_size.x > instruction_size.x)
-        minimum_x = message_size.x;
+        min_width = message_size.x;
     else
-        minimum_x = instruction_size.x;
+        min_width = instruction_size.x;
 
     if (header_left != NULL)
         header_left_size = tte_get_text_size(header_left);
@@ -84,37 +89,38 @@ void status(u16 message_ink, const char *message, const char *instruction, const
     else
         header_right_size.x = header_right_size.y = 0;
 
-    total_header_x = header_left_size.x + header_right_size.x;
-    if (minimum_x < total_header_x)
-        minimum_x = total_header_x;
+    header_width = header_left_size.x + header_right_size.x;
+    if (min_width < header_width)
+        min_width = header_width;
 
-    blocks_x = (minimum_x / 8);
-    left_x = 13 - (blocks_x / 2);
-    right_x = 16 + (blocks_x / 2);
-    draw_window(left_x, 4, right_x, 15);
+    blocks_width = (min_width / 8);
+    left = 13 - (blocks_width / 2);
+    right = 16 + (blocks_width / 2);
+    draw_window(left, 4, right, 15);
 
-    tte_set_ink(3);
-    tte_set_pos((left_x * 8) + 8, 39);
+    tte_set_ink(CATTR_YELLOW);
+    tte_set_pos((left * 8) + 8, 39);
     tte_write(header_left);
-    tte_set_pos((right_x * 8) + 1 - header_right_size.x, 39);
+    tte_set_pos((right * 8) + 1 - header_right_size.x, 39);
     tte_write(header_right);
 
     tte_set_ink(message_ink);
-    tte_set_pos(120 - (message_size.x / 2), 80 - (message_size.y / 2));
+    tte_set_pos(CENTER_X - (message_size.x / 2),
+                CENTER_Y - (message_size.y / 2));
     tte_write(message);
 
-    tte_set_ink(2);
-    tte_set_pos(120 - (instruction_size.x / 2), 114);
+    tte_set_ink(CATTR_DARK_BLUE);
+    tte_set_pos(CENTER_X - (instruction_size.x / 2), 114);
     tte_write(instruction);
 }
 
 void fatal(const char *message)
 {
-    status(4, message, "Press any button to reset.", NULL, NULL);
-    wait_for_key_and_reset();
+    status(CATTR_RED, message, "Press any button to reset.", NULL, NULL);
+    pause_and_reset();
 }
 
-void wait_for_key_and_reset()
+void pause_and_reset()
 {
     while (REG_KEYINPUT != KEY_MASK)
         VBlankIntrWait();

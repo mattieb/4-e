@@ -31,13 +31,18 @@
 
 void setup_link()
 {
-    irq_enable(II_SERIAL);
     irq_enable(II_KEYPAD);
+    irq_enable(II_SERIAL);
+
     REG_KEYCNT = KEY_B | KCNT_IRQ;
 
     REG_RCNT = REG_RCNT & ~R_MODE_GPIO;
     REG_SIOCNT = SIO_MODE_MULTI;
-    REG_SIOCNT = REG_SIOCNT | SIO_IRQ | SIOM_CONNECTED | SIOM_SLAVE | SIOM_115200;
+    REG_SIOCNT = REG_SIOCNT |
+                 SIO_IRQ |
+                 SIOM_CONNECTED |
+                 SIOM_SLAVE |
+                 SIOM_115200;
 }
 
 int wait_for_player_assignment()
@@ -47,7 +52,7 @@ int wait_for_player_assignment()
         IntrWait(1, IRQ_SERIAL | IRQ_KEYPAD);
         if (~REG_KEYINPUT & KEY_B)
             return 1;
-    } while ((REG_SIOCNT & SIOM_ID_MASK) == 0);
+    } while (!(REG_SIOCNT & SIOM_ID_MASK));
     return 0;
 }
 
@@ -95,37 +100,39 @@ int connect()
     u16 card_request;
     int error;
 
-    if (send_until_receive(HANDSHAKE_1, HANDSHAKE_1))
+    if (send_until_receive(PROTO_HANDSHAKE_1, PROTO_HANDSHAKE_1))
         return 1;
-    if (send_until_receive(HANDSHAKE_2, HANDSHAKE_2))
+    if (send_until_receive(PROTO_HANDSHAKE_2, PROTO_HANDSHAKE_2))
         return 1;
-    if (send_until_receive(HANDSHAKE_3, HANDSHAKE_3))
+    if (send_until_receive(PROTO_HANDSHAKE_3, PROTO_HANDSHAKE_3))
         return 1;
 
     error = 0;
-    card_request = send_until_receive_not(HANDSHAKE_3, HANDSHAKE_3, &error);
+    card_request = send_until_receive_not(PROTO_HANDSHAKE_3,
+                                          PROTO_HANDSHAKE_3,
+                                          &error);
     if (error)
         return 1;
 
-    if (send_until_receive(GAME_ANIMATING, EREADER_ANIMATING))
+    if (send_until_receive(PROTO_GAME_ANIMATING, PROTO_EREADER_ANIMATING))
         return 1;
-    if (send(EREADER_ANIMATING))
+    if (send(PROTO_EREADER_ANIMATING))
         return 1;
 
     switch (card_request)
     {
-    case GAME_REQUEST_DEMO:
-        if (send_until_receive(EREADER_READY, GAME_READY_DEMO))
+    case PROTO_GAME_REQUEST_DEMO:
+        if (send_until_receive(PROTO_EREADER_READY, PROTO_GAME_READY_DEMO))
             return 1;
         break;
 
-    case GAME_REQUEST_POWERUP:
-        if (send_until_receive(EREADER_READY, GAME_READY_POWERUP))
+    case PROTO_GAME_REQUEST_POWERUP:
+        if (send_until_receive(PROTO_EREADER_READY, PROTO_GAME_READY_POWERUP))
             return 1;
         break;
 
-    case GAME_REQUEST_LEVEL:
-        if (send_until_receive(EREADER_READY, GAME_READY_LEVEL))
+    case PROTO_GAME_REQUEST_LEVEL:
+        if (send_until_receive(PROTO_EREADER_READY, PROTO_GAME_READY_LEVEL))
             return 1;
         break;
 
@@ -133,7 +140,7 @@ int connect()
         return 2;
     }
 
-    if (send_until_receive(EREADER_SEND_READY, GAME_RECEIVE_READY))
+    if (send_until_receive(PROTO_EREADER_SEND_READY, PROTO_GAME_RECEIVE_READY))
         return 1;
 
     return 0;
@@ -142,15 +149,15 @@ int connect()
 int send_card(const void *card)
 {
     u32 checksum;
-    off_t offset;
+    u16 offset;
     u16 block;
 
-    if (send(EREADER_SEND_START))
+    if (send(PROTO_EREADER_SEND_START))
         return 1;
 
     checksum = 0;
 
-    for (offset = CARD_HEADER_OFFSET; offset < CARD_DATA_LENGTH; offset += 2)
+    for (offset = OFFSET_CARD_HEADER; offset < SIZE_CARD_DATA; offset += 2)
     {
         block = *(const u16 *)((const u8 *)card + offset);
         if (send(block))
@@ -162,7 +169,7 @@ int send_card(const void *card)
         return 1;
     if (send(checksum >> 16))
         return 1;
-    if (send(EREADER_SEND_END))
+    if (send(PROTO_EREADER_SEND_END))
         return 1;
 
     return 0;

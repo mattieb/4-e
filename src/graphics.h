@@ -23,12 +23,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_GRAPHICS_H
-#define INCLUDE_GRAPHICS_H
+#ifndef _4E_GRAPHICS_H_
+#define _4E_GRAPHICS_H_
 
 #include <tonc.h>
 
-// character (tile) base block, for tile artwork
 #define CBB 0
 
 #define TILE_EMPTY 0
@@ -45,7 +44,6 @@
 #define TILE_WINDOW_VERTICAL_EDGE 8
 #define TILE_WINDOW_CORNER 9
 
-// screen base block, for tilemaps
 #define SBB_BACKGROUND 31
 #define SBB_FRAME 30
 #define SBB_WINDOW 29
@@ -65,7 +63,12 @@
 #define CLR_TEXT_YELLOW RGB15(26, 23, 8)
 #define CLR_TEXT_RED RGB15(17, 6, 5)
 
+#define TILEMAP(sbb, x, y) se_mem[sbb][((y) * 32) + (x)]
+
+#define CENTER_X 120
+#define CENTER_Y 80
+
 void init_graphics();
 void start_display();
 
-#endif /* INCLUDE_GRAPHICS_H */
+#endif /* _4E_GRAPHICS_H_ */

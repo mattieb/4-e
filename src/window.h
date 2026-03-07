@@ -23,11 +23,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_WINDOW_H
-#define INCLUDE_WINDOW_H
+#ifndef _4E_WINDOW_H_
+#define _4E_WINDOW_H_
+
+#define WINDOW_AREA_LEFT 0
+#define WINDOW_AREA_TOP 16
+#define WINDOW_AREA_RIGHT 239
+#define WINDOW_AREA_BOTTOM 143
 
 void init_window();
-void draw_window(int left_x, int upper_y, int right_x, int lower_y);
+void draw_window(u8 left, u8 top, u8 right, u8 lower);
 void erase_window();
 
-#endif /* INCLUDE_WINDOW_H */
+#endif /* _4E_WINDOW_H_ */

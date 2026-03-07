@@ -23,11 +23,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_TILEMAPS_H
-#define INCLUDE_TILEMAPS_H
+#ifndef _4E_TILEMAPS_H_
+#define _4E_TILEMAPS_H_
 
 #include <tonc.h>
 
 extern const u32 tilemap_frame[320];
 
-#endif /* INCLUDE_TILEMAPS_H */
+#endif /* _4E_TILEMAPS_H_ */

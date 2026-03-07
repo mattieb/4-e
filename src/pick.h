@@ -23,8 +23,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_PICK_H
-#define INCLUDE_PICK_H
+#ifndef _4E_PICK_H_
+#define _4E_PICK_H_
 
 #include <stddef.h>
 
@@ -32,6 +32,17 @@
 
 #define PICKER_PAGE_SIZE 10
 
+#define PICKER_LEFT 23
+#define PICKER_TOP 23
+#define PICKER_RIGHT 217
+#define PICKER_BOTTOM 122
+
+#define PICKER_ITEM_TOP(i) 23 + ((i) * 10)
+#define PICKER_ITEM_BOTTOM(i) PICKER_ITEM_TOP(i) + 9
+
+#define PICKER_CONTENT_TYPE_RIGHT 70
+#define PICKER_NAME_LEFT 73
+
 const void *pick(const GBFS_FILE *initial_volume, char *name);
 
-#endif /* INCLUDE_PICK_H */
+#endif /* _4E_PICK_H_ */

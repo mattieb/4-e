@@ -31,7 +31,7 @@
 void init_graphics()
 {
     TILE *tile;
-    int i;
+    u8 i;
 
     tile = &tile_mem[CBB][TILE_EMPTY];
     for (i = 0; i <= 7; i++)
@@ -45,10 +45,29 @@ void handle_vblank_interrupt()
 
 void start_display()
 {
-    REG_BG0CNT = BG_CBB(0) | BG_SBB(SBB_BACKGROUND) | BG_4BPP | BG_REG_32x32 | BG_PRIO(3);
-    REG_BG1CNT = BG_CBB(0) | BG_SBB(SBB_FRAME) | BG_4BPP | BG_REG_32x32 | BG_PRIO(2);
-    REG_BG2CNT = BG_CBB(0) | BG_SBB(SBB_WINDOW) | BG_4BPP | BG_REG_32x32 | BG_PRIO(1);
-    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0 | DCNT_BG1 | DCNT_BG2 | DCNT_BG3;
+    REG_BG0CNT = BG_CBB(0) |
+                 BG_SBB(SBB_BACKGROUND) |
+                 BG_4BPP |
+                 BG_REG_32x32 |
+                 BG_PRIO(3);
+
+    REG_BG1CNT = BG_CBB(0) |
+                 BG_SBB(SBB_FRAME) |
+                 BG_4BPP |
+                 BG_REG_32x32 |
+                 BG_PRIO(2);
+
+    REG_BG2CNT = BG_CBB(0) |
+                 BG_SBB(SBB_WINDOW) |
+                 BG_4BPP |
+                 BG_REG_32x32 |
+                 BG_PRIO(1);
+
+    REG_DISPCNT = DCNT_MODE0 |
+                  DCNT_BG0 |
+                  DCNT_BG1 |
+                  DCNT_BG2 |
+                  DCNT_BG3;
 
     irq_init(NULL);
     irq_add(II_VBLANK, handle_vblank_interrupt);

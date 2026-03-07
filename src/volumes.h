@@ -23,21 +23,25 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_VOLUMES_H
-#define INCLUDE_VOLUMES_H
+#ifndef _4E_VOLUMES_H_
+#define _4E_VOLUMES_H_
 
 #include <stdbool.h>
 
 #include "gbfs.h"
 
-#define MAX_OBJECT_NAME_LENGTH 25
+#define MAX_OBJECT_NAME 25
 
-const GBFS_FILE *find_volume(const void *start);
+const GBFS_FILE *first_volume();
 const GBFS_FILE *next_volume(const GBFS_FILE *current_volume);
-const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
-const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume);
+const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume,
+                                     const GBFS_FILE *first_volume);
+const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume,
+                                         const GBFS_FILE *first_volume);
 bool more_volumes_exist(const GBFS_FILE *current_volume);
 unsigned short object_count(const GBFS_FILE *volume);
-const void *get_object(const GBFS_FILE *volume, unsigned short index, char *name);
+const void *get_object(const GBFS_FILE *volume,
+                       unsigned short index,
+                       char *name);
 
-#endif /* INCLUDE_VOLUMES_H */
+#endif /* _4E_VOLUMES_H_ */

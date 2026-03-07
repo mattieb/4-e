@@ -43,17 +43,22 @@ void wait_for_keyup(u16 key)
 
 void draw_pick_window()
 {
+    char instruction_move[] = "\204 move";
+    char instruction_switch[] = "\202\203 switch stacks";
+    char instruction_send[] = "\200 send";
+
     draw_window(2, 2, 27, 17);
 
-    tte_set_ink(2);
+    tte_set_ink(CATTR_DARK_BLUE);
+
     tte_set_pos(24, 129);
-    tte_write("\204 move");
+    tte_write(instruction_move);
 
-    tte_set_pos(120 - (tte_get_text_size("\202\203 switch stacks").x / 2), 129);
-    tte_write("\202\203 switch stacks");
+    tte_set_pos(CENTER_X - (tte_get_text_size(instruction_switch).x / 2), 129);
+    tte_write(instruction_switch);
 
-    tte_set_pos(217 - tte_get_text_size("\200 send").x, 129);
-    tte_write("\200 send");
+    tte_set_pos(217 - tte_get_text_size(instruction_send).x, 129);
+    tte_write(instruction_send);
 }
 
 const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
@@ -67,9 +72,9 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
     int selection;
     int last_selection;
     const void *selected_object;
-    char name[MAX_OBJECT_NAME_LENGTH];
+    char name[MAX_OBJECT_NAME];
     const void *object;
-    char content_type[MAX_CONTENT_TYPE_LENGTH];
+    char content_type[MAX_CONTENT_TYPE];
 
     current_volume = initial_volume;
 
@@ -84,7 +89,8 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
         last_selection = -1;
         selected_object = NULL;
 
-        tte_erase_rect(23, 23, 217, 122);
+        tte_erase_rect(PICKER_LEFT, PICKER_TOP,
+                       PICKER_RIGHT, PICKER_BOTTOM);
 
         while (true)
         {
@@ -93,30 +99,49 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                 for (offset = 0; offset < PICKER_PAGE_SIZE; offset++)
                 {
                     index = page + offset;
-                    object = index < count ? get_object(current_volume, index, name) : NULL;
+                    if (index < count)
+                        object = get_object(current_volume, index, name);
+                    else
+                        object = NULL;
 
                     if (index == selection)
                     {
-                        schr4c_rect(&tte_get_context()->dst, 23, 23 + (offset * 10), 217, 32 + (offset * 10), 3);
-                        tte_set_ink(1);
-                        tte_set_pos(24, 24 + (offset * 10));
+                        schr4c_rect(&tte_get_context()->dst,
+                                    PICKER_LEFT,
+                                    PICKER_ITEM_TOP(offset),
+                                    PICKER_RIGHT,
+                                    PICKER_ITEM_BOTTOM(offset),
+                                    CATTR_YELLOW);
+
+                        tte_set_ink(CATTR_LIGHT_BLUE);
+                        tte_set_pos(PICKER_LEFT + 1,
+                                    PICKER_ITEM_TOP(offset) + 1);
                         tte_write(">");
+
                         selected_object = object;
-                        strncpy(selected_name, name, MAX_OBJECT_NAME_LENGTH);
+                        strncpy(selected_name, name, MAX_OBJECT_NAME);
                     }
                     else if (index == last_selection || page != last_page)
                     {
-                        tte_erase_rect(23, 23 + (offset * 10), 217, 32 + (offset * 10));
+                        tte_erase_rect(PICKER_LEFT,
+                                       PICKER_ITEM_TOP(offset),
+                                       PICKER_RIGHT,
+                                       PICKER_ITEM_BOTTOM(offset));
                     }
 
                     if (object != NULL)
                     {
                         get_card_content_type(object, content_type);
-                        tte_set_ink(2);
-                        tte_set_pos(70 - tte_get_text_size(content_type).x, 24 + (offset * 10));
+
+                        tte_set_ink(CATTR_DARK_BLUE);
+                        tte_set_pos(PICKER_CONTENT_TYPE_RIGHT -
+                                        tte_get_text_size(content_type).x,
+                                    PICKER_ITEM_TOP(offset) + 1);
                         tte_write(content_type);
-                        tte_set_ink(1);
-                        tte_set_pos(73, 24 + (offset * 10));
+
+                        tte_set_ink(CATTR_LIGHT_BLUE);
+                        tte_set_pos(PICKER_NAME_LEFT,
+                                    PICKER_ITEM_TOP(offset) + 1); 
                         tte_write(name);
                     }
                 }
@@ -135,9 +160,10 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                         selection++;
                     else
                     {
-                        current_volume = next_volume_or_loop(current_volume, initial_volume);
+                        current_volume = next_volume_or_loop(current_volume,
+                                                             initial_volume);
                         count = object_count(current_volume);
-                        last_page = -1; // force redraw
+                        last_page = -1; // redraw
                         selection = 0;
                     }
 
@@ -151,9 +177,11 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                         selection--;
                     else
                     {
-                        current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                        current_volume =
+                            previous_volume_or_loop(current_volume,
+                                                    initial_volume);
                         count = object_count(current_volume);
-                        last_page = -1;
+                        last_page = -1; // redraw
                         selection = count - 1;
                     }
 
@@ -166,11 +194,13 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     selection += PICKER_PAGE_SIZE;
 
                     // would we move off the last page?
-                    if (selection / PICKER_PAGE_SIZE > (count - 1) / PICKER_PAGE_SIZE)
+                    if (selection / PICKER_PAGE_SIZE >
+                        (count - 1) / PICKER_PAGE_SIZE)
                     {
-                        current_volume = next_volume_or_loop(current_volume, initial_volume);
+                        current_volume = next_volume_or_loop(current_volume,
+                                                             initial_volume);
                         count = object_count(current_volume);
-                        last_page = -1;
+                        last_page = -1; // redraw
                         selection = selection % PICKER_PAGE_SIZE;
                     }
 
@@ -184,10 +214,13 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                         selection -= PICKER_PAGE_SIZE;
                     else
                     {
-                        current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                        current_volume =
+                            previous_volume_or_loop(current_volume,
+                                                    initial_volume);
                         count = object_count(current_volume);
-                        last_page = -1;
-                        selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
+                        last_page = -1; // redraw
+                        selection = (selection % PICKER_PAGE_SIZE) + count -
+                                    (count % PICKER_PAGE_SIZE);
                     }
 
                     wait_for_keyup(KEY_LEFT);
@@ -196,11 +229,13 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
                 if (~REG_KEYINPUT & KEY_L)
                 {
-                    current_volume = previous_volume_or_loop(current_volume, initial_volume);
+                    current_volume = previous_volume_or_loop(current_volume,
+                                                             initial_volume);
                     count = object_count(current_volume);
                     page = 0;
-                    last_page = -1;
-                    selection = (selection % PICKER_PAGE_SIZE) + count - (count % PICKER_PAGE_SIZE);
+                    last_page = -1; // redraw
+                    selection = (selection % PICKER_PAGE_SIZE) + count -
+                                (count % PICKER_PAGE_SIZE);
 
                     wait_for_keyup(KEY_L);
                     break;
@@ -208,10 +243,11 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
                 if (~REG_KEYINPUT & KEY_R)
                 {
-                    current_volume = next_volume_or_loop(current_volume, initial_volume);
+                    current_volume = next_volume_or_loop(current_volume,
+                                                         initial_volume);
                     count = object_count(current_volume);
                     page = 0;
-                    last_page = -1;
+                    last_page = -1; // redraw
                     selection = selection % PICKER_PAGE_SIZE;
 
                     wait_for_keyup(KEY_R);

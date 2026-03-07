@@ -40,10 +40,10 @@
 int main(void)
 {
     const GBFS_FILE *initial_volume;
-    char name[MAX_OBJECT_NAME_LENGTH];
+    char name[MAX_OBJECT_NAME];
     const void *object;
     char meta[20];
-    char content_type[MAX_CONTENT_TYPE_LENGTH];
+    char content_type[MAX_CONTENT_TYPE];
     char set_type;
     u8 set_number;
 
@@ -52,18 +52,18 @@ int main(void)
     init_frame();
     init_window();
     init_ui();
-    
+
     start_display();
 
-    initial_volume = find_volume(0);
+    initial_volume = first_volume();
     if (!initial_volume)
     {
-        fatal("No cards attached. See instructions.");
+        fatal("No card data attached. See instructions.");
     }
 
-    if (!more_volumes_exist(initial_volume) && object_count(initial_volume) == 1)
+    if (!more_volumes_exist(initial_volume) &&
+        object_count(initial_volume) == 1)
     {
-        // object should not be NULL, but we will end if it is
         object = get_object(initial_volume, 0, name);
     }
     else
@@ -73,23 +73,30 @@ int main(void)
 
     if (object == NULL)
     {
-        fatal("Error reading cards. See instructions.");
+        fatal("Error reading card data. See instructions.");
     }
 
     get_card_content_type(object, content_type);
     set_type = get_set_type(object);
     set_number = get_set_number(object);
 
-    snprintf(meta, 20, "%s (07-%c%03u)", content_type, set_type, set_number);
+    snprintf(meta, 20,
+             "%s (07-%c%03u)", content_type, set_type, set_number);
 
-    status(1, "Waiting...", "Start communication, or cancel with \201.", name, meta);
+    status(CATTR_LIGHT_BLUE, "Waiting...",
+           "Start communication, or cancel with \201.",
+           name, meta);
+
     setup_link();
     if (wait_for_player_assignment())
     {
         fatal("Cancelled.");
     }
 
-    status(1, "Connecting...", "Please wait, or cancel with \201.", name, meta);
+    status(CATTR_LIGHT_BLUE, "Connecting...",
+           "Please wait, or cancel with \201.",
+           name, meta);
+
     switch (connect())
     {
     case 0:
@@ -105,12 +112,18 @@ int main(void)
         break;
     }
 
-    status(1, "Sending...", "Please wait, or cancel with \201.", name, meta);
+    status(CATTR_LIGHT_BLUE, "Sending...",
+           "Please wait, or cancel with \201.",
+           name, meta);
+
     if (send_card(object))
     {
         fatal("Cancelled.");
     }
 
-    status(1, "Done!", "Press any key to reset.", name, meta);
-    wait_for_key_and_reset();
+    status(CATTR_LIGHT_BLUE, "Done!",
+           "Press any button to reset.",
+           name, meta);
+
+    pause_and_reset();
 }

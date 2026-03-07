@@ -23,16 +23,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_CARD_H
-#define INCLUDE_CARD_H
+#ifndef _4E_CARD_H_
+#define _4E_CARD_H_
 
-#define CARD_HEADER_OFFSET 0x72
-#define CARD_DATA_LENGTH 2112
+#define OFFSET_CARD_HEADER 0x72
+#define SIZE_CARD_DATA 2112
 
-#define MAX_CONTENT_TYPE_LENGTH 9
+#define MAX_CONTENT_TYPE 9
 
-#define SET_NUMBER_BYTE_OFFSET 0x72
-#define SET_TYPE_BYTE_OFFSET 0x73
+#define OFFSET_SET_NUMBER 0x72
+#define OFFSET_SET_TYPE 0x73
 
 #define SET_TYPE_A 0x00
 #define SET_TYPE_C 0x04
@@ -43,4 +43,4 @@ int get_card_content_type(const void *card, char *content_type);
 char get_set_type(const void *card);
 u8 get_set_number(const void *card);
 
-#endif /* INCLUDE_CARD_H */
+#endif /* _4E_CARD_H_ */

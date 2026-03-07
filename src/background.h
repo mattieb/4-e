@@ -23,10 +23,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_BACKGROUND_H
-#define INCLUDE_BACKGROUND_H
+#ifndef _4E_BACKGROUND_H_
+#define _4E_BACKGROUND_H_
 
 void init_background();
 void animate_background();
 
-#endif /* INCLUDE_BACKGROUND_H */
+#endif /* _4E_BACKGROUND_H_ */

@@ -49,59 +49,60 @@ void init_window()
     tonccpy(tile, tile_window_corner, 32);
 }
 
-void draw_window(int left_x, int upper_y, int right_x, int lower_y)
+void draw_window(u8 left, u8 top, u8 right, u8 bottom)
 {
-    int y;
-    int x;
+    u8 y;
+    u8 x;
     SCR_ENTRY entry;
 
     erase_window();
 
-    for (y = upper_y; y <= lower_y; y++)
+    for (y = top; y <= bottom; y++)
     {
-        for (x = left_x; x <= right_x; x++)
+        for (x = left; x <= right; x++)
         {
-            if (y == upper_y)
+            if (y == top)
             {
-                if (x == left_x)
+                if (x == left)
                     entry = TILE_WINDOW_CORNER;
-                else if (x == right_x)
+                else if (x == right)
                     entry = TILE_WINDOW_CORNER | SE_HFLIP;
                 else
                     entry = TILE_WINDOW_HORIZONTAL_EDGE;
             }
-            else if (y == lower_y)
+            else if (y == bottom)
             {
-                if (x == left_x)
+                if (x == left)
                     entry = TILE_WINDOW_CORNER | SE_VFLIP;
-                else if (x == right_x)
+                else if (x == right)
                     entry = TILE_WINDOW_CORNER | SE_HFLIP | SE_VFLIP;
                 else
                     entry = TILE_WINDOW_HORIZONTAL_EDGE | SE_VFLIP;
             }
             else
             {
-                if (x == left_x)
+                if (x == left)
                     entry = TILE_WINDOW_VERTICAL_EDGE;
-                else if (x == right_x)
+                else if (x == right)
                     entry = TILE_WINDOW_VERTICAL_EDGE | SE_HFLIP;
                 else
                     entry = TILE_WINDOW;
             }
 
-            se_mem[SBB_WINDOW][(32 * y) + x] = entry;
+            TILEMAP(SBB_WINDOW, x, y) = entry;
         }
     }
 }
 
 void erase_window()
 {
-    int y;
-    int x;
+    u8 y;
+    u8 x;
 
     for (y = 2; y <= 17; y++)
         for (x = 2; x <= 27; x++)
-            se_mem[SBB_WINDOW][(32 * y) + x] = TILE_EMPTY;
+            TILEMAP(SBB_WINDOW, x, y) = TILE_EMPTY;
 
-    tte_erase_rect(0, 0, 239, 151);
+    tte_erase_rect(WINDOW_AREA_LEFT, WINDOW_AREA_TOP,
+                   WINDOW_AREA_RIGHT, WINDOW_AREA_BOTTOM);
 }

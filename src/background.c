@@ -35,8 +35,8 @@ static u8 scroll;
 void init_background()
 {
     TILE *tile;
-    int y;
-    int x;
+    u8 y;
+    u8 x;
 
     pal_bg_mem[0] = CLR_PATTERN_DARK_BLUE;
     pal_bg_mem[1] = CLR_PATTERN_LIGHT_BLUE;
@@ -48,10 +48,13 @@ void init_background()
     {
         for (x = 0; x <= 31; x += 2)
         {
-            se_mem[SBB_BACKGROUND][(y * 32) + x] = TILE_DIAMOND_QUADRANT;
-            se_mem[SBB_BACKGROUND][(y * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP;
-            se_mem[SBB_BACKGROUND][((y + 1) * 32) + x] = TILE_DIAMOND_QUADRANT | SE_VFLIP;
-            se_mem[SBB_BACKGROUND][((y + 1) * 32) + x + 1] = TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
+            TILEMAP(SBB_BACKGROUND, x, y) = TILE_DIAMOND_QUADRANT;
+            TILEMAP(SBB_BACKGROUND, x + 1, y) =
+                TILE_DIAMOND_QUADRANT | SE_HFLIP;
+            TILEMAP(SBB_BACKGROUND, x, y + 1) =
+                TILE_DIAMOND_QUADRANT | SE_VFLIP;
+            TILEMAP(SBB_BACKGROUND, x + 1, y + 1) =
+                TILE_DIAMOND_QUADRANT | SE_HFLIP | SE_VFLIP;
         }
     }
 

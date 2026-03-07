@@ -30,7 +30,7 @@
 
 u8 get_set_type_byte(const void *card)
 {
-    return *((const u8 *)card + SET_TYPE_BYTE_OFFSET);
+    return *((const u8 *)card + OFFSET_SET_TYPE);
 }
 
 int get_card_content_type(const void *card, char *content_type)
@@ -38,17 +38,17 @@ int get_card_content_type(const void *card, char *content_type)
     switch (get_set_type_byte(card))
     {
     case SET_TYPE_A:
-        strncpy(content_type, "Level", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Level", MAX_CONTENT_TYPE);
         return 0;
     case SET_TYPE_C:
     case SET_TYPE_D:
-        strncpy(content_type, "Power-Up", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Power-Up", MAX_CONTENT_TYPE);
         return 0;
     case SET_TYPE_E:
-        strncpy(content_type, "Demo", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "Demo", MAX_CONTENT_TYPE);
         return 0;
     default:
-        strncpy(content_type, "???", MAX_CONTENT_TYPE_LENGTH);
+        strncpy(content_type, "???", MAX_CONTENT_TYPE);
         return 1;
     }
 }
@@ -72,5 +72,5 @@ char get_set_type(const void *card)
 
 u8 get_set_number(const void *card)
 {
-    return *((const u8 *)card + SET_NUMBER_BYTE_OFFSET);
+    return *((const u8 *)card + OFFSET_SET_NUMBER);
 }

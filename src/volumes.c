@@ -27,9 +27,9 @@
 
 #include "volumes.h"
 
-const GBFS_FILE *find_volume(const void *start)
+const GBFS_FILE *first_volume()
 {
-    return find_first_gbfs_file(start != 0 ? start : (void *)find_first_gbfs_file);
+    return find_first_gbfs_file((void *)find_first_gbfs_file);
 }
 
 const GBFS_FILE *next_volume(const GBFS_FILE *current_volume)
@@ -37,20 +37,22 @@ const GBFS_FILE *next_volume(const GBFS_FILE *current_volume)
     return find_first_gbfs_file(skip_gbfs_file(current_volume));
 }
 
-const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
+const GBFS_FILE *next_volume_or_loop(const GBFS_FILE *current_volume,
+                                     const GBFS_FILE *first_volume)
 {
     const GBFS_FILE *next;
-    
+
     next = next_volume(current_volume);
     if (next == NULL)
         return first_volume;
     return next;
 }
 
-const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume, const GBFS_FILE *first_volume)
+const GBFS_FILE *previous_volume_or_loop(const GBFS_FILE *current_volume,
+                                         const GBFS_FILE *first_volume)
 {
     const GBFS_FILE *candidate;
-    
+
     candidate = first_volume;
     do
     {
@@ -71,7 +73,9 @@ unsigned short object_count(const GBFS_FILE *volume)
     return volume->dir_nmemb;
 }
 
-const void *get_object(const GBFS_FILE *volume, unsigned short index, char *name)
+const void *get_object(const GBFS_FILE *volume,
+                       unsigned short index,
+                       char *name)
 {
     return gbfs_get_nth_obj(volume, index, name, NULL);
 }

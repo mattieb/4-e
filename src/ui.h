@@ -23,12 +23,19 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_UI_H
-#define INCLUDE_UI_H
+#ifndef _4E_UI_H_
+#define _4E_UI_H_
+
+#define CATTR_LIGHT_BLUE 1
+#define CATTR_DARK_BLUE 2
+#define CATTR_YELLOW 3
+#define CATTR_RED 4
 
 void init_ui();
-void status(u16 message_ink, const char *message, const char *instruction, const char *header_left, const char *header_right);
+void status(u16 message_ink, const char *message,
+            const char *instruction,
+            const char *header_left, const char *header_right);
 void fatal(const char *message);
-void wait_for_key_and_reset();
+void pause_and_reset();
 
-#endif /* INCLUDE_UI_H */
+#endif /* _4E_UI_H_ */

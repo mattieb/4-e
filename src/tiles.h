@@ -23,8 +23,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_TILES_H
-#define INCLUDE_TILES_H
+#ifndef _4E_TILES_H_
+#define _4E_TILES_H_
 
 #include <tonc.h>
 
@@ -40,4 +40,4 @@ extern const u32 tile_window_horizontal_edge[8];
 extern const u32 tile_window_vertical_edge[8];
 extern const u32 tile_window_corner[8];
 
-#endif /* INCLUDE_TILES_H */
+#endif /* _4E_TILES_H_ */

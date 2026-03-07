@@ -23,9 +23,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef INCLUDE_FRAME_H
-#define INCLUDE_FRAME_H
+#ifndef _4E_FRAME_H_
+#define _4E_FRAME_H_
 
 void init_frame();
 
-#endif /* INCLUDE_FRAME_H */
+#endif /* _4E_FRAME_H_ */
