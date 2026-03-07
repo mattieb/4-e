@@ -23,6 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 #include <tonc.h>
@@ -41,7 +42,7 @@ void wait_for_keyup(u16 key)
         VBlankIntrWait();
 }
 
-void draw_pick_window()
+void draw_pick_window(bool multi_volume_mode)
 {
     char instruction_move[] = "\204 move";
     char instruction_switch[] = "\202\203 switch stacks";
@@ -54,14 +55,19 @@ void draw_pick_window()
     tte_set_pos(24, 129);
     tte_write(instruction_move);
 
-    tte_set_pos(CENTER_X - (tte_get_text_size(instruction_switch).x / 2), 129);
-    tte_write(instruction_switch);
+    if (multi_volume_mode)
+    {
+        tte_set_pos(CENTER_X - (tte_get_text_size(instruction_switch).x / 2), 129);
+        tte_write(instruction_switch);
+    }
 
     tte_set_pos(217 - tte_get_text_size(instruction_send).x, 129);
     tte_write(instruction_send);
 }
 
-const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
+const void *pick(const GBFS_FILE *initial_volume,
+                 bool multi_volume_mode,
+                 char *selected_name)
 {
     const GBFS_FILE *current_volume;
     unsigned short count;
@@ -78,7 +84,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
     current_volume = initial_volume;
 
-    draw_pick_window();
+    draw_pick_window(multi_volume_mode);
 
     while (true)
     {
@@ -141,7 +147,7 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
 
                         tte_set_ink(CATTR_LIGHT_BLUE);
                         tte_set_pos(PICKER_NAME_LEFT,
-                                    PICKER_ITEM_TOP(offset) + 1); 
+                                    PICKER_ITEM_TOP(offset) + 1);
                         tte_write(name);
                     }
                 }
@@ -227,31 +233,35 @@ const void *pick(const GBFS_FILE *initial_volume, char *selected_name)
                     break;
                 }
 
-                if (~REG_KEYINPUT & KEY_L)
+                if (multi_volume_mode)
                 {
-                    current_volume = previous_volume_or_loop(current_volume,
+                    if (~REG_KEYINPUT & KEY_L)
+                    {
+                        current_volume =
+                            previous_volume_or_loop(current_volume,
+                                                    initial_volume);
+                        count = object_count(current_volume);
+                        page = 0;
+                        last_page = -1; // redraw
+                        selection = (selection % PICKER_PAGE_SIZE) + count -
+                                    (count % PICKER_PAGE_SIZE);
+
+                        wait_for_keyup(KEY_L);
+                        break;
+                    }
+
+                    if (~REG_KEYINPUT & KEY_R)
+                    {
+                        current_volume = next_volume_or_loop(current_volume,
                                                              initial_volume);
-                    count = object_count(current_volume);
-                    page = 0;
-                    last_page = -1; // redraw
-                    selection = (selection % PICKER_PAGE_SIZE) + count -
-                                (count % PICKER_PAGE_SIZE);
+                        count = object_count(current_volume);
+                        page = 0;
+                        last_page = -1; // redraw
+                        selection = selection % PICKER_PAGE_SIZE;
 
-                    wait_for_keyup(KEY_L);
-                    break;
-                }
-
-                if (~REG_KEYINPUT & KEY_R)
-                {
-                    current_volume = next_volume_or_loop(current_volume,
-                                                         initial_volume);
-                    count = object_count(current_volume);
-                    page = 0;
-                    last_page = -1; // redraw
-                    selection = selection % PICKER_PAGE_SIZE;
-
-                    wait_for_keyup(KEY_R);
-                    break;
+                        wait_for_keyup(KEY_R);
+                        break;
+                    }
                 }
 
                 if (~REG_KEYINPUT & KEY_A)

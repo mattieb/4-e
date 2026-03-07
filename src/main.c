@@ -23,6 +23,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <tonc.h>
 
@@ -40,6 +41,7 @@
 int main(void)
 {
     const GBFS_FILE *initial_volume;
+    bool multi_volume_mode;
     char name[MAX_OBJECT_NAME];
     const void *object;
     char meta[20];
@@ -61,14 +63,15 @@ int main(void)
         fatal("No card data attached. See instructions.");
     }
 
-    if (!more_volumes_exist(initial_volume) &&
-        object_count(initial_volume) == 1)
+    multi_volume_mode = more_volumes_exist(initial_volume);
+
+    if (!multi_volume_mode && object_count(initial_volume) == 1)
     {
         object = get_object(initial_volume, 0, name);
     }
     else
     {
-        object = pick(initial_volume, name);
+        object = pick(initial_volume, multi_volume_mode, name);
     }
 
     if (object == NULL)

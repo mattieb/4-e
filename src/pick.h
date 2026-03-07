@@ -2,7 +2,7 @@
  * This file is part of 4-e <https://mattiebee.dev/4-e>.
  *
  * Copyright 2024-2026 Mattie Behrens.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * “Software”), to deal in the Software without restriction, including
@@ -10,10 +10,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -26,6 +26,7 @@
 #ifndef _4E_PICK_H_
 #define _4E_PICK_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #include "gbfs.h"
@@ -43,6 +44,8 @@
 #define PICKER_CONTENT_TYPE_RIGHT 70
 #define PICKER_NAME_LEFT 73
 
-const void *pick(const GBFS_FILE *initial_volume, char *name);
+const void *pick(const GBFS_FILE *initial_volume,
+                 bool multi_volume_mode,
+                 char *name);
 
 #endif /* _4E_PICK_H_ */
