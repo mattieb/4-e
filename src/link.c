@@ -41,7 +41,7 @@ void setup_link()
     REG_SIOCNT = REG_SIOCNT |
                  SIO_IRQ |
                  SIOM_CONNECTED |
-                 SIOM_SLAVE |
+                 SIOM_CHILD |
                  SIOM_115200;
 }
 

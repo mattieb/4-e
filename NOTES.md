@@ -1,22 +1,37 @@
 # Notes
 
-## Connection
+-   [Communication](#communication)
+    -   [Connection](#connection)
+    -   [Card scanning protocol](#card-scanning-protocol)
+    -   [Shutdown protocol](#shutdown-protocol)
+-   [Formats](#formats)
+    -   [raw](#raw)
+    -   [bin](#bin)
+    -   [sav](#sav)
+    -   [Card contents](#card-contents)
+        -   [Level contents](#level-contents)
+    -   [lcmp](#lcmp)
+    -   [level](#level)
+
+## Communication
+
+### Connection
 
 The game and e-Reader (specifically, the game's custom e-Reader
 dotcode scanner, which is separately sent by the game to the e-Reader
 and saved there for future use) communicate over [SIO multiplayer
-mode](https://problemkaputt.de/gbatek.htm#siomultiplayermode).
+mode](https://www.problemkaputt.de/gbatek-sio-multi-player-mode.htm).
 
-The game is player 0 and master; the e-Reader is player 1.
+The game is player 0 and parent; the e-Reader is player 1 and child.
 
 Baud rate is 115200.
 
-As master, the game drives the serial clock. The e-Reader waits for
-the game to be ready before sending any data. Having our program
-wait for serial interrupts before sending data appears to work very
-reliably.
+As parent, the game drives the serial clock. The e-Reader waits for
+the game to be ready before sending any data. 4-e waits for serial
+interrupts before sending data, which has proven to be perfectly
+reliable.
 
-## Card scanning protocol
+### Card scanning protocol
 
 When the e-Reader detects that the connection has been established,
 it starts the protocol:
@@ -81,7 +96,7 @@ it starts the protocol:
 15. The game sends F5F5 to acknowledge a successful transmission,
     and the e-Reader begins [shutdown](#shutdown-protocol).
 
-## Shutdown protocol
+### Shutdown protocol
 
 The e-Reader will do a clean shutdown of the communication session
 in certain circumstances.

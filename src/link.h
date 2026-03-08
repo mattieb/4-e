@@ -55,6 +55,8 @@
 #define PROTO_GAME_RECEIVE_OK       0xf5f5
 #define PROTO_GAME_RECEIVE_ERROR    0xf4f4
 
+#define SIOM_CHILD 0x0004
+
 void setup_link();
 int wait_for_player_assignment();
 int connect();
