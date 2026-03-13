@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> 4-e's public source code repository is now hosted on [Codeberg](https://codeberg.org) at [mattiebee/4-e](https://codeberg.org/mattiebee/4-e). The original public source code repository at [GitHub](https://github.com) is now a best-effort mirror. Releases will only be published at Codeberg.
+
 # 4-e
 
 4-e sends [_Super Mario Advance
