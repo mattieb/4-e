@@ -1,3 +1,7 @@
+# 4.1 - 2026-03-12
+
+-   Multiboot support has been added. See the README for instructions on building a multiboot ROM.
+
 # 4.0 - 2026-03-06
 
 -   Brand-new and _fun_ graphical user interface, with a custom-designed font to get more on the screen and increase readability.
