@@ -17,9 +17,19 @@ Need .bin files? The latest versions of the [Smaghetti](https://smaghetti.mattgr
 
 ### Building your ROM
 
-Download the base "4-e.gba" ROM from [releases](https://github.com/mattieb/4-e/releases), or build it with [devkitARM](https://devkitpro.org/wiki/devkitARM).
-
 Gather your cards in ".bin" format.
+
+Download the base "4-e.gba" ROM from [releases](https://github.com/mattieb/4-e/releases), or build it with [devkitARM](https://devkitpro.org/wiki/devkitARM):
+
+```shell
+gmake
+```
+
+If you want to build a multiboot ROM, you can use an alternate target:
+
+```shell
+gmake PROJECT=4-e_mb
+```
 
 #### gbfs-web
 
@@ -56,11 +66,11 @@ cat 4-e.gba a.gbfs b.gbfs >"4-e with Stacks.gba"
 3.  Pick the e-Card you wish you send from the list. (If your GBFS file only had one e-Card in it, it will be selected automatically; you won't see the list.) 4-e says "Waiting..." 
 
     > [!NOTE]
-    > From this point on, you can cancel and reset by pressing B.
+    > From this point on, you can cancel and start over by pressing B.
 
 4.  On the first system, start the e-Reader communication process. 4-e will connect to the game automatically and send your card, saying "Sending..."
 
-5.  When 4-e has finished ("Done!"), press any button to reset it. Now you can send another card, if you wish!
+5.  When 4-e has finished ("Done!"), press any button. Now you can send another card, if you wish!
 
 ## Troubleshooting
 

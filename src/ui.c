@@ -116,11 +116,12 @@ void status(u16 message_ink, const char *message,
 
 void fatal(const char *message)
 {
-    status(CATTR_RED, message, "Press any button to reset.", NULL, NULL);
-    pause_and_reset();
+    status(CATTR_RED, message, "Press any button to restart.", NULL, NULL);
+    pause();
+    erase_window();
 }
 
-void pause_and_reset()
+void pause()
 {
     while (REG_KEYINPUT != KEY_MASK)
         VBlankIntrWait();
@@ -128,8 +129,4 @@ void pause_and_reset()
         VBlankIntrWait();
     while (REG_KEYINPUT != KEY_MASK)
         VBlankIntrWait();
-
-    erase_window();
-
-    SoftReset();
 }

@@ -57,76 +57,83 @@ int main(void)
 
     start_display();
 
-    initial_volume = first_volume();
-    if (!initial_volume)
+    while (true)
     {
-        fatal("No card data attached. See instructions.");
+        initial_volume = first_volume();
+        if (!initial_volume)
+        {
+            fatal("No card data attached. See instructions.");
+            continue;
+        }
+
+        multi_volume_mode = more_volumes_exist(initial_volume);
+
+        if (!multi_volume_mode && object_count(initial_volume) == 1)
+        {
+            object = get_object(initial_volume, 0, name);
+        }
+        else
+        {
+            object = pick(initial_volume, multi_volume_mode, name);
+        }
+
+        if (object == NULL)
+        {
+            fatal("Error reading card data. See instructions.");
+            continue;
+        }
+
+        get_card_content_type(object, content_type);
+        set_type = get_set_type(object);
+        set_number = get_set_number(object);
+
+        snprintf(meta, 20,
+                 "%s (07-%c%03u)", content_type, set_type, set_number);
+
+        status(CATTR_LIGHT_BLUE, "Waiting...",
+               "Start communication, or cancel with \201.",
+               name, meta);
+
+        setup_link();
+        if (wait_for_player_assignment())
+        {
+            fatal("Cancelled.");
+            continue;
+        }
+
+        status(CATTR_LIGHT_BLUE, "Connecting...",
+               "Please wait, or cancel with \201.",
+               name, meta);
+
+        switch (connect())
+        {
+        case 0:
+            break;
+        case 1:
+            fatal("Cancelled.");
+            continue;
+        case 2:
+            fatal("Connection failed.");
+            continue;
+        default:
+            fatal("Internal error.");
+            continue;
+        }
+
+        status(CATTR_LIGHT_BLUE, "Sending...",
+               "Please wait, or cancel with \201.",
+               name, meta);
+
+        if (send_card(object))
+        {
+            fatal("Cancelled.");
+            continue;
+        }
+
+        status(CATTR_LIGHT_BLUE, "Done!",
+               "Press any button to restart.",
+               name, meta);
+
+        pause();
     }
-
-    multi_volume_mode = more_volumes_exist(initial_volume);
-
-    if (!multi_volume_mode && object_count(initial_volume) == 1)
-    {
-        object = get_object(initial_volume, 0, name);
-    }
-    else
-    {
-        object = pick(initial_volume, multi_volume_mode, name);
-    }
-
-    if (object == NULL)
-    {
-        fatal("Error reading card data. See instructions.");
-    }
-
-    get_card_content_type(object, content_type);
-    set_type = get_set_type(object);
-    set_number = get_set_number(object);
-
-    snprintf(meta, 20,
-             "%s (07-%c%03u)", content_type, set_type, set_number);
-
-    status(CATTR_LIGHT_BLUE, "Waiting...",
-           "Start communication, or cancel with \201.",
-           name, meta);
-
-    setup_link();
-    if (wait_for_player_assignment())
-    {
-        fatal("Cancelled.");
-    }
-
-    status(CATTR_LIGHT_BLUE, "Connecting...",
-           "Please wait, or cancel with \201.",
-           name, meta);
-
-    switch (connect())
-    {
-    case 0:
-        break;
-    case 1:
-        fatal("Cancelled.");
-        break;
-    case 2:
-        fatal("Connection failed.");
-        break;
-    default:
-        fatal("Internal error.");
-        break;
-    }
-
-    status(CATTR_LIGHT_BLUE, "Sending...",
-           "Please wait, or cancel with \201.",
-           name, meta);
-
-    if (send_card(object))
-    {
-        fatal("Cancelled.");
-    }
-
-    status(CATTR_LIGHT_BLUE, "Done!",
-           "Press any button to reset.",
-           name, meta);
-
-    pause_and_reset();
 }

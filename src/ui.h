@@ -36,6 +36,6 @@ void status(u16 message_ink, const char *message,
             const char *instruction,
             const char *header_left, const char *header_right);
 void fatal(const char *message);
-void pause_and_reset();
+void pause();
 
 #endif /* _4E_UI_H_ */
