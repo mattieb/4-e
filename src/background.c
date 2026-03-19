@@ -38,8 +38,8 @@ void init_background()
     u8 y;
     u8 x;
 
-    pal_bg_mem[0] = CLR_PATTERN_DARK_BLUE;
-    pal_bg_mem[1] = CLR_PATTERN_LIGHT_BLUE;
+    pal_bg_mem[0] = CLR_PATTERN_LIGHT_BLUE;
+    pal_bg_mem[1] = CLR_PATTERN_DARK_BLUE;
 
     tile = &tile_mem[CBB][TILE_DIAMOND_QUADRANT];
     tonccpy(tile, tile_diamond_quadrant, 32);
