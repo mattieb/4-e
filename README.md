@@ -28,7 +28,7 @@ Download the base "4-e.gba" ROM from [releases](https://github.com/mattieb/4-e/r
 gmake
 ```
 
-If you want to build a multiboot ROM, you can use an alternate target:
+If you want a multiboot ROM, grab "4-e_mb.gba", or you can use an alternate build target:
 
 ```shell
 gmake PROJECT=4-e_mb
@@ -36,7 +36,7 @@ gmake PROJECT=4-e_mb
 
 #### gbfs-web
 
-The easiest way to attach cards is with gbfs-web](https://mattiebee.app/gbfs-web). Select your 4-e ROM, select your cards, and save a new 4-e ROM with the cards attached.
+The easiest way to attach cards is with [gbfs-web](https://mattiebee.app/gbfs-web). Select your 4-e ROM, select your cards, and save a new 4-e ROM with the cards attached.
 
 #### Command-line tool
 
