@@ -53,7 +53,7 @@ void init_ui()
     tte_set_pos(16, 151);
     tte_write("mattiebee.dev/4-e");
 
-    char version[] = "v4.0";
+    char version[] = "v4.1";
     tte_set_pos(225 - tte_get_text_size(version).x, 151);
     tte_write(version);
 }
